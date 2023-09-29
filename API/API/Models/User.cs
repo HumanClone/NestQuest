@@ -1,4 +1,4 @@
-namespace API
+namespace API.Models
 {
     public class User
     {
@@ -6,5 +6,8 @@ namespace API
         public string? Name { get; set; }
         public string? Email { get; set; }
         public List<string>? birdSightingIds { get; set; }
+        public bool? darkTheme { get; set; }
+        public float? maxDistance { get; set; }
+        public bool? metricSystem { get; set; } = true;
     }
 }

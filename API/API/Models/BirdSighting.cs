@@ -1,4 +1,4 @@
-﻿namespace API
+﻿namespace API.Models
 {
     public class BirdSighting
     {
@@ -7,5 +7,6 @@
         public string? BirdId { get; set; }
         public DateTime? DateSeen { get; set; }
         public string? Coordinates { get; set; }
+        public List<Picture>? pictures { get; set; }
     }
 }

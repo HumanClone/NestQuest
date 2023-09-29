@@ -4,7 +4,7 @@ using FireSharp.Interfaces;
 using FireSharp.Response;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using API;
+using API.Models;
 
 namespace TimeWise.Controllers
 {
