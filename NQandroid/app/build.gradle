@@ -19,6 +19,12 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        manifestPlaceholders = [
+                WeatherKey: "477tIqNneNef0aYUfJDHOX3v75ta2jtw",
+                // Add more key-value pairs as needed
+        ]
+        buildConfigField "String", "WEATHER_API_KEY", "\"${manifestPlaceholders['WeatherKey']}\""
     }
 
     buildTypes {
