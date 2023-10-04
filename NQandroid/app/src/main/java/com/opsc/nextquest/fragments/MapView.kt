@@ -28,6 +28,11 @@ import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.tabs.TabLayout
 import com.opsc.nextquest.BuildConfig
 import com.opsc.nextquest.R
+import com.opsc.nextquest.api.ebird.eBirdApi
+import com.opsc.nextquest.api.ebird.eBirdRetro
+import com.opsc.nextquest.api.ebird.models.HotspotView
+import com.opsc.nextquest.api.ebird.models.Hotspots
+import com.opsc.nextquest.api.ebird.models.hDetails
 import com.opsc.nextquest.api.weather.WeatherApi
 import com.opsc.nextquest.api.weather.WeatherRetro
 import com.opsc.nextquest.api.weather.models.ALocation
@@ -51,6 +56,10 @@ class MapView : Fragment() {
     private var lolist: List<Address> = emptyList()
     private lateinit var alocal: ALocation
     private lateinit var conditions:Conditions
+    var spots:List<HotspotView> = listOf()
+
+    //TODO: Change Later
+    var conditionsNeeded:Boolean= false
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -67,13 +76,6 @@ class MapView : Fragment() {
         locationManager=requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         getLocation()
-//        link=view.findViewById(R.id.icon)
-//        link.setOnClickListener {
-//            val i = Intent(Intent.ACTION_VIEW);
-//            i.setData(Uri.parse(conditions.MobileLink))
-//            startActivity(i)
-//
-//        }
 
     }
 
@@ -82,6 +84,68 @@ class MapView : Fragment() {
         _binding = null
     }
 
+
+    private fun getNearbyHotspots()
+    {
+        val ebirdapi=eBirdRetro.getInstance().create((eBirdApi::class.java))
+        //TODO: Change the distance parameter according to the settings
+        GlobalScope.launch {
+            val call:Call<List<Hotspots>?>?=ebirdapi.nbyHotspots(lolist[0].latitude.toString(),lolist[0].longitude.toString(),10.0)
+            call!!.enqueue(object : Callback<List<Hotspots>?> {
+
+                override fun onResponse(call: Call<List<Hotspots>?>?, response: Response<List<Hotspots>?>)
+                {
+                    if (response.isSuccessful())
+                    {
+                        Log.d("testing",response.body()!!.toString())
+                        val hotspots=response.body()!!
+                        spots = hotspots.map { item ->
+                            HotspotView(
+                                locId = item.locId,
+                                locName = item.locName,
+                                lat = item.lat,
+                                lng = item.lng,
+                                numSpeciesAllTime = item.numSpeciesAllTime
+                            )
+                        }
+                        Log.d("testing",spots.toString())
+                    }
+                }
+
+                override fun onFailure(call: Call<List<Hotspots>?>?, t: Throwable?) {
+                    // displaying an error message in toast
+
+                    Log.d("Testing","fail")
+                }
+            })
+        }
+    }
+
+
+    private fun getHotspotDetails(code:String){
+        val ebirdapi=eBirdRetro.getInstance().create((eBirdApi::class.java))
+
+        GlobalScope.launch {
+            val call:Call<hDetails>?=ebirdapi.hotspotInfo(code)
+            call!!.enqueue(object : Callback<hDetails> {
+
+                override fun onResponse(call: Call<hDetails>?, response: Response<hDetails>)
+                {
+                    if (response.isSuccessful())
+                    {
+                        Log.d("testing",response.body()!!.toString())
+
+                    }
+                }
+
+                override fun onFailure(call: Call<hDetails>?, t: Throwable?) {
+                    // displaying an error message in toast
+
+                    Log.d("Testing","fail")
+                }
+            })
+        }
+    }
     private fun getLoKey()
     {
         val weatherApiKey = BuildConfig.WEATHER_API_KEY
@@ -98,7 +162,8 @@ class MapView : Fragment() {
                     {
                         Log.d("testing",response.body()!!.toString())
                         alocal=response.body()!!
-                        getConditions()
+
+                            getConditions()
 
                     }
                 }
@@ -121,10 +186,8 @@ class MapView : Fragment() {
             val call: Call<List<Conditions>?>? = weatherApi.getConditions(alocal.Key.toString(), weatherApiKey)
 
             call!!.enqueue(object : Callback<List<Conditions>?> {
-                override fun onResponse(
-                    call: Call<List<Conditions>?>?,
-                    response: Response<List<Conditions>?>
-                ) {
+                override fun onResponse(call: Call<List<Conditions>?>?, response: Response<List<Conditions>?>)
+                {
                     if (response.isSuccessful) {
                         val conditionsList = response.body()
                         if (conditionsList != null && conditionsList.isNotEmpty()) {
@@ -160,10 +223,14 @@ class MapView : Fragment() {
                     val location: Location? = task.result
                     if (location != null) {
                         val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                        lolist=
-                            geocoder.getFromLocation(location.latitude,location.longitude,1) as List<Address>
+                        lolist=  geocoder.getFromLocation(location.latitude,location.longitude,1) as List<Address>
                         Log.d("testing","Latitude:${lolist[0].latitude}\tLongitude:${lolist[0].longitude}")
-                        getLoKey()
+                        if(conditionsNeeded)
+                        {
+                            getLoKey()
+                            conditionsNeeded=false;
+                        }
+                        getNearbyHotspots()
                     }
                 }
             } else {
