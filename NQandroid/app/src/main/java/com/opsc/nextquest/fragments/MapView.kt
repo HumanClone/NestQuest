@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.tabs.TabLayout
 import com.opsc.nextquest.BuildConfig
@@ -75,9 +76,13 @@ class MapView : Fragment() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationManager=requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
+//        val mapFragment=requireFragmentManager().findFragmentById(R.id.map_fragment) as SupportMapFragment
+//        mapFragment.getMapAsync(this)
         getLocation()
 
     }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -163,7 +168,7 @@ class MapView : Fragment() {
                         Log.d("testing",response.body()!!.toString())
                         alocal=response.body()!!
 
-                            getConditions()
+                        getConditions()
 
                     }
                 }
