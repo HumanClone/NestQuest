@@ -1,5 +1,6 @@
 package com.opsc.nextquest.api.ebird.adapters
 
+import android.location.Location
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.opsc.nextquest.Objects.CurrentLocation
 import com.opsc.nextquest.R
 import com.opsc.nextquest.api.ebird.models.HotspotView
 import com.opsc.nextquest.api.ebird.models.Hotspots
@@ -34,10 +36,12 @@ class HotspotListAdapter (var data: List<HotspotView>) :
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        var system:Boolean=true
         val item = data[position]
         holder.Name.text=item.locName
-        //holder.Dist.text=
         holder.Num.text="Number of Speices: "+item.numSpeciesAllTime
+        holder.Dist.text=CurrentLocation.convertDistance(item.distance!!)
+
 
 
         //Code attributed

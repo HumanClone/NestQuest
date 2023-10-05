@@ -27,15 +27,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.tabs.TabLayout
 import com.opsc.nextquest.BuildConfig
+import com.opsc.nextquest.Objects.CurrentLocation
 import com.opsc.nextquest.R
 import com.opsc.nextquest.api.ebird.eBirdApi
 import com.opsc.nextquest.api.ebird.eBirdRetro
@@ -68,6 +71,7 @@ class MapView : Fragment() {
     private lateinit var conditions:Conditions
     var hotModal=HotspotsModal()
     var spots:List<HotspotView> = listOf()
+    var itemModal=HotspotItem()
     var locationChanged:Boolean=true
 
 
@@ -90,15 +94,18 @@ class MapView : Fragment() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationManager=requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        getLocation()
         currentLocal()
         val fab = view.findViewById<FloatingActionButton>(R.id.extended_fab_loc)
         fab.setOnClickListener {
-            getLocation()
             currentLocal()
+
         }
         val fab2=view.findViewById<FloatingActionButton>(R.id.extended_fab_hot)
         fab2.setOnClickListener {
+            val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
+            mapFragment.getMapAsync { googleMap->
+            hotModal.setGoogleMap(googleMap)
+            }
             hotModal.show(parentFragmentManager,HotspotsModal.TAG)
         }
 
@@ -107,6 +114,7 @@ class MapView : Fragment() {
                 // This method will be called whenever the location of the user changes
                 // You can perform actions based on the new location here
                 getLocation()
+                currentLocal()
                 locationChanged=true
             }
             override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
@@ -115,9 +123,24 @@ class MapView : Fragment() {
 
 
         }
-
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
+        mapFragment.getMapAsync { googleMap ->
+            googleMap.setOnMarkerClickListener { marker ->
+                val selectedSpot = spots.find { item -> item.latLng == marker.position }
+                if (selectedSpot != null) {
+                    itemModal.id = selectedSpot.locId!!
+                    itemModal.setGoogleMap(googleMap)
+                    itemModal.show(parentFragmentManager, HotspotItem.TAG)
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 15f))
+                }
+                true // Return true to indicate that the event is consumed.
+            }
+        }
 
     }
+
+
+
 
     @SuppressLint("MissingPermission")
     override fun onStart() {
@@ -125,7 +148,7 @@ class MapView : Fragment() {
 
         if (checkPermissions()) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 20.0f, locationListener)
-            Log.d("testing","20 sec has passed")
+            Log.d("testing","started requests")
         }
     }
 
@@ -182,6 +205,7 @@ class MapView : Fragment() {
                                 locId = item.locId,
                                 locName = item.locName,
                                 latLng = LatLng(item.lat!!,item.lng!!),
+                                distance=distance(item.locName!!,item.lat!!,item.lng!!),
                                 numSpeciesAllTime = item.numSpeciesAllTime
                             )
                         }
@@ -189,17 +213,18 @@ class MapView : Fragment() {
                         val icon = resources.getDrawable(R.drawable.hot_24)
                         val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
                         mapFragment.getMapAsync {googleMap->
-                        spots.map { item->
-                            googleMap.addMarker(
-                                MarkerOptions()
-                                    .position(item.latLng!!)
-                                    .title(item.locName)
-                                    .snippet(item.numSpeciesAllTime.toString())
-                                    .icon(BitmapDescriptorFactory.fromBitmap(icon.toBitmap(icon.intrinsicWidth, icon.intrinsicHeight, null)))
-                            )
-                        hotModal.spots=spots
+                            spots.map { item->
+                                googleMap.addMarker(
+                                    MarkerOptions()
+                                        .position(item.latLng!!)
+                                        .title(item.locName)
+                                        .snippet(item.numSpeciesAllTime.toString())
+                                        .icon(BitmapDescriptorFactory.fromBitmap(icon.toBitmap(icon.intrinsicWidth, icon.intrinsicHeight, null)))
+                                )
+                            hotModal.spots=spots.sortedBy { it.distance }
 
-                        }
+                            }
+
 
                         }
                         Log.d("testing",spots.toString())
@@ -216,37 +241,18 @@ class MapView : Fragment() {
     }
 
 
-    private fun getHotspotDetails(code:String): hDetails {
-        val ebirdapi = eBirdRetro.getInstance().create((eBirdApi::class.java))
-        var hotspot:hDetails= hDetails()
-        GlobalScope.launch {
-            val call: Call<hDetails>? = ebirdapi.hotspotInfo(code)
-            call!!.enqueue(object : Callback<hDetails>
-            {
-
-                override fun onResponse(call: Call<hDetails>?, response: Response<hDetails>)
-                {
-                    if (response.isSuccessful())
-                    {
-                        Log.d("testing", response.body()!!.toString())
-                        hotspot = response.body()!!
 
 
-                    }
-                }
-
-                override fun onFailure(call: Call<hDetails>?, t: Throwable?)
-                {
-                    // displaying an error message in toast
-
-                    Log.d("Testing", "fail")
-                }
-            })
-        }
-        return hotspot
+    private fun distance(name:String,lat:Double,lng:Double):Double{
+        var current: Location = Location("currentLocation")
+        current.latitude= CurrentLocation.lat
+        current.longitude= CurrentLocation.lng
+        var destination: Location = Location(name)
+        destination.latitude=lat
+        destination.longitude=lng
+        var dist=current.distanceTo(destination)
+        return dist.toDouble()
     }
-
-
 
 
 
@@ -260,6 +266,9 @@ class MapView : Fragment() {
                     if (location != null) {
                         val geocoder = Geocoder(requireContext(), Locale.getDefault())
                         lolist=  geocoder.getFromLocation(location.latitude,location.longitude,1) as List<Address>
+                        CurrentLocation.LatLng= LatLng(location.latitude,location.longitude)
+                        CurrentLocation.lat=location.latitude
+                        CurrentLocation.lng=location.longitude
                         Log.d("testing","Latitude:${lolist[0].latitude}\tLongitude:${lolist[0].longitude}")
                         if(conditionsNeeded)
                         {
