@@ -9,9 +9,11 @@
 
     <fragment
         android:id="@+id/map_fragment"
+        android:name="com.opsc.nextquest.fragments.MapView"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,6 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/my_location_24"
+            android:layout_marginBottom="10dp"
             android:contentDescription="TODO" />
 
 

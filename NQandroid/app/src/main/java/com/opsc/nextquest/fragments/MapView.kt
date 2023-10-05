@@ -94,6 +94,7 @@ class MapView : Fragment() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationManager=requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
+        getLocation()
         currentLocal()
         val fab = view.findViewById<FloatingActionButton>(R.id.extended_fab_loc)
         fab.setOnClickListener {
@@ -102,55 +103,59 @@ class MapView : Fragment() {
         }
         val fab2=view.findViewById<FloatingActionButton>(R.id.extended_fab_hot)
         fab2.setOnClickListener {
-            val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
-            mapFragment.getMapAsync { googleMap->
-            hotModal.setGoogleMap(googleMap)
-            }
-            hotModal.show(parentFragmentManager,HotspotsModal.TAG)
-        }
-
-        locationListener = object : LocationListener {
-            override fun onLocationChanged(location: Location) {
-                // This method will be called whenever the location of the user changes
-                // You can perform actions based on the new location here
-                getLocation()
-                currentLocal()
-                locationChanged=true
-            }
-            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-                Log.d("testing","Status change")
-            }
-
-
-        }
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
-        mapFragment.getMapAsync { googleMap ->
-            googleMap.setOnMarkerClickListener { marker ->
-                val selectedSpot = spots.find { item -> item.latLng == marker.position }
-                if (selectedSpot != null) {
-                    itemModal.id = selectedSpot.locId!!
-                    itemModal.setGoogleMap(googleMap)
-                    itemModal.show(parentFragmentManager, HotspotItem.TAG)
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 15f))
+            if(spots.size!=0)
+            {
+                val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
+                mapFragment.getMapAsync { googleMap->
+                    hotModal.setGoogleMap(googleMap)
                 }
-                true // Return true to indicate that the event is consumed.
+                hotModal.show(parentFragmentManager,HotspotsModal.TAG)
+            }
+
+        }
+
+
+        if(checkPermissions())
+        {   locationListener = object : LocationListener {
+                override fun onLocationChanged(location: Location) {
+                    // This method will be called whenever the location of the user changes
+                    // You can perform actions based on the new location here
+                    getLocation()
+                    currentLocal()
+                    locationChanged=true
+                }
+                override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+                    Log.d("testing","Status change")
+                }
+
+
+            }
+            val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
+            mapFragment.getMapAsync { googleMap ->
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 20.0f, locationListener)
+                googleMap.setOnMarkerClickListener { marker ->
+                    if(spots.size!=0)
+                    {
+                        val selectedSpot = spots.find { item -> item.latLng == marker.position }
+                        if (selectedSpot != null) {
+                            itemModal.id = selectedSpot.locId!!
+                            itemModal.setGoogleMap(googleMap)
+                            itemModal.show(parentFragmentManager, HotspotItem.TAG)
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 15F))
+                        }
+                    }
+                    true // Return true to indicate that the event is consumed.
+                }
             }
         }
 
+
     }
 
 
 
 
-    @SuppressLint("MissingPermission")
-    override fun onStart() {
-        super.onStart()
 
-        if (checkPermissions()) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20000, 20.0f, locationListener)
-            Log.d("testing","started requests")
-        }
-    }
 
     override fun onStop() {
         super.onStop()
@@ -173,7 +178,7 @@ class MapView : Fragment() {
                 val location: Location? = task.result
                 if (location != null) {
                     val latLng = LatLng(location.latitude, location.longitude)
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
                 }
             }
         }
@@ -191,7 +196,7 @@ class MapView : Fragment() {
         val ebirdapi=eBirdRetro.getInstance().create((eBirdApi::class.java))
         //TODO: Change the distance parameter according to the settings
         GlobalScope.launch {
-            val call:Call<List<Hotspots>?>?=ebirdapi.nbyHotspots(lolist[0].latitude.toString(),lolist[0].longitude.toString(),1.0)
+            val call:Call<List<Hotspots>?>?=ebirdapi.nbyHotspots(CurrentLocation.lat.toString(),CurrentLocation.lng.toString(),4.0)
             call!!.enqueue(object : Callback<List<Hotspots>?> {
 
                 override fun onResponse(call: Call<List<Hotspots>?>?, response: Response<List<Hotspots>?>)
@@ -209,6 +214,7 @@ class MapView : Fragment() {
                                 numSpeciesAllTime = item.numSpeciesAllTime
                             )
                         }
+                        spots=spots.sortedBy{ it.distance }
                         //https://stackoverflow.com/questions/18053156/set-image-from-drawable-as-marker-in-google-map-version-2
                         val icon = resources.getDrawable(R.drawable.hot_24)
                         val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
@@ -221,13 +227,14 @@ class MapView : Fragment() {
                                         .snippet(item.numSpeciesAllTime.toString())
                                         .icon(BitmapDescriptorFactory.fromBitmap(icon.toBitmap(icon.intrinsicWidth, icon.intrinsicHeight, null)))
                                 )
-                            hotModal.spots=spots.sortedBy { it.distance }
+                            hotModal.spots=spots
 
                             }
 
 
                         }
-                        Log.d("testing",spots.toString())
+
+                        Log.d("testing","sorted: "+spots.toString())
                     }
                 }
 
