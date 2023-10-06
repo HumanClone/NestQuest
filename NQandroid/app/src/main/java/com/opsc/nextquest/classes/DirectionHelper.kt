@@ -1,27 +1,35 @@
 package com.opsc.nextquest.classes
 
+import android.graphics.Color
 import android.location.Location
 import android.util.Log
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.PolylineOptions
 import com.opsc.nextquest.Objects.CurrentLocation
 import com.opsc.nextquest.R
+import com.opsc.nextquest.api.maps.models.MapData
 
 class DirectionHelper {
 
-    private fun distance(destination:LatLng):String{
+    //https://www.spaceotechnologies.com/blog/calculate-distance-two-gps-coordinates-google-maps-api/
+     fun distance(name:String,lat:Double,lng:Double):String{
+        return convertDistance(distanceM(name,lat,lng))
+    }
+
+
+
+    fun distanceM(name:String,lat:Double,lng:Double):Double{
         var current: Location = Location("currentLocation")
         current.latitude= CurrentLocation.lat
         current.longitude= CurrentLocation.lng
-        var destination: Location = Location("Destination")
-        destination.latitude=destination.latitude!!
-        destination.longitude=destination.longitude!!
+        var destination: Location = Location(name)
+        destination.latitude=lat
+        destination.longitude=lng
         var dist=current.distanceTo(destination)
-        Log.d("testing",dist.toString())
-        return CurrentLocation.convertDistance(dist.toDouble())
+        return dist.toDouble()
     }
 
+    //https://www.geeksforgeeks.org/how-to-generate-route-between-two-locations-in-google-map-in-android/
     fun decodePolyline(encoded: String): List<LatLng> {
         val poly = ArrayList<LatLng>()
         var index = 0
@@ -54,5 +62,34 @@ class DirectionHelper {
         return poly
     }
 
+    fun getPolyLine(mapdata: MapData): PolylineOptions
+    {
+        val result =  ArrayList<List<LatLng>>()
+        val respObj = mapdata
+        val path =  ArrayList<LatLng>()
+        for (i in 0 until respObj.routes[0].legs[0].steps.size){
+            path.addAll(decodePolyline(respObj.routes[0].legs[0].steps[i].polyline!!.points!!))
+        }
 
+        result.add(path)
+        Log.d("testing",result.toString())
+
+        val lineoption = PolylineOptions()
+        for (i in result.indices){
+            lineoption.addAll(result[i])
+            lineoption.width(20f)
+            lineoption.color(Color.GREEN)
+            lineoption.geodesic(true)
+        }
+        return lineoption
+    }
+
+    fun convertDistance(distanceInMeters: Double): String {
+        //TODO:This needs to check the system
+        return if (true) {
+            String.format("%.2f",distanceInMeters / 1000.0) + " km"// Convert to kilometers
+        } else {
+            String.format("%.2f",distanceInMeters * 0.000621371).toString() +" mi." // Convert to miles
+        }
+    }
 }

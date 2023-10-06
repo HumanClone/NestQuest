@@ -12,10 +12,12 @@ import com.opsc.nextquest.Objects.CurrentLocation
 import com.opsc.nextquest.R
 import com.opsc.nextquest.api.ebird.models.HotspotView
 import com.opsc.nextquest.api.ebird.models.Hotspots
+import com.opsc.nextquest.classes.DirectionHelper
 
 class HotspotListAdapter (var data: List<HotspotView>) :
     RecyclerView.Adapter<HotspotListAdapter.MyViewHolder>() {
     private var onClickListener:OnClickListener?=null
+    val helper:DirectionHelper=DirectionHelper()
 
     //binds and sets elements and values in a viewholder  to that of each object
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -40,7 +42,7 @@ class HotspotListAdapter (var data: List<HotspotView>) :
         val item = data[position]
         holder.Name.text=item.locName
         holder.Num.text="Number of Speices: "+item.numSpeciesAllTime
-        holder.Dist.text=CurrentLocation.convertDistance(item.distance!!)
+        holder.Dist.text=helper.convertDistance(item.distance!!)
 
 
 

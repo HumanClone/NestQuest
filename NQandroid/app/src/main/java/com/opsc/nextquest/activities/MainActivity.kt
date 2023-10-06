@@ -9,6 +9,9 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.opsc.nextquest.R
 import com.opsc.nextquest.databinding.ActivityMainBinding
+import com.opsc.nextquest.fragments.MapView
+import com.opsc.nextquest.fragments.Observations
+import com.opsc.nextquest.fragments.Settings
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,15 +25,16 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+//         Passing each menu ID as a set of Ids because each
+//         menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_MapView, R.id.navigation_Settings, R.id.navigation_Observation
+                R.id.navigation_MapView, R.id.navigation_Settings, R.id.navigation_Observation,R.id.directions
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
 
 
     }

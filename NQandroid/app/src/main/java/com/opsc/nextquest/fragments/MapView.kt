@@ -49,6 +49,7 @@ import com.opsc.nextquest.api.weather.WeatherApi
 import com.opsc.nextquest.api.weather.WeatherRetro
 import com.opsc.nextquest.api.weather.models.ALocation
 import com.opsc.nextquest.api.weather.models.Conditions
+import com.opsc.nextquest.classes.DirectionHelper
 import com.opsc.nextquest.databinding.FragmentMapViewBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -72,6 +73,7 @@ class MapView : Fragment() {
     var spots:List<HotspotView> = listOf()
     var itemModal=HotspotItem()
     var locationChanged:Boolean=true
+    val helper:DirectionHelper=DirectionHelper()
 
 
     //TODO: Change Later
@@ -222,7 +224,7 @@ class MapView : Fragment() {
                                 locId = item.locId,
                                 locName = item.locName,
                                 latLng = LatLng(item.lat!!,item.lng!!),
-                                distance=distance(item.locName!!,item.lat!!,item.lng!!),
+                                distance=helper.distanceM(item.locName!!,item.lat!!,item.lng!!),
                                 numSpeciesAllTime = item.numSpeciesAllTime
                             )
                         }
@@ -257,20 +259,6 @@ class MapView : Fragment() {
                 }
             })
         }
-    }
-
-
-
-
-    private fun distance(name:String,lat:Double,lng:Double):Double{
-        var current: Location = Location("currentLocation")
-        current.latitude= CurrentLocation.lat
-        current.longitude= CurrentLocation.lng
-        var destination: Location = Location(name)
-        destination.latitude=lat
-        destination.longitude=lng
-        var dist=current.distanceTo(destination)
-        return dist.toDouble()
     }
 
 

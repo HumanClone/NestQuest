@@ -1,68 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:id="@+id/drag_handle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <FrameLayout
         android:id="@+id/standard_bottom_sheet"
         style="@style/Widget.Material3.BottomSheet"
-        android:elevation="1dp"
-        android:layout_gravity="center"
-        android:minHeight="300dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints">
+        app:behavior_hideable="false"
+        android:layout_height="match_parent">
 
+        <!-- Drag handle for accessibility -->
+
+        <!--    <FrameLayout-->
+        <!--        android:id="@+id/standard_bottom_sheet"-->
+        <!--        style="@style/Widget.Material3.BottomSheet"-->
+        <!--        android:elevation="1dp"-->
+        <!--        android:layout_gravity="center"-->
+        <!--        android:minHeight="300dp"-->
+        <!--        android:layout_width="match_parent"-->
+        <!--        android:layout_height="wrap_content"-->
+        <!--        tools:ignore="MissingConstraints"-->
+        <!--        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">-->
+
+        <!--        <com.google.android.material.bottomsheet.BottomSheetDragHandleView-->
+        <!--            android:id="@+id/drag_handle"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"/>-->
 
         <!-- Bottom sheet contents. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="40dp"
             android:layout_marginStart="20dp"
+            android:layout_marginTop="40dp"
             android:layout_marginEnd="20dp"
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/modal_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/modal_date"
                 android:text="Directions"
-                android:textSize="30dp"/>
+                android:textSize="30dp" />
 
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/modal_recycler_dir"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:id="@+id/modal_recycler_dir"
-                android:paddingTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:scrollbars="vertical"
-                android:fadeScrollbars="true"/>
+                android:fadeScrollbars="true"
+                android:paddingTop="20dp"
+                android:scrollbars="vertical" />
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/extended_fab_directions_modal"
-                app:backgroundTint="?attr/colorSecondary"
-                android:textColor="@color/white"
-                app:iconTint="@color/white"
-                android:layout_marginStart="40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="Directions"
                 android:layout_gravity="end"
+                android:layout_marginStart="40dp"
                 android:layout_marginBottom="20dp"
+                android:contentDescription="Directions"
                 android:gravity="end"
                 android:text="Navigate"
-                app:icon="@drawable/directions_24"/>
+                android:textColor="@color/white"
+                app:backgroundTint="?attr/colorSecondary"
+                app:icon="@drawable/directions_24"
+                app:iconTint="@color/white" />
 
         </LinearLayout>
-
 
 
     </FrameLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
