@@ -1,6 +1,5 @@
 package com.opsc.nextquest.fragments
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
@@ -9,15 +8,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import com.google.gson.Gson
 import com.opsc.nextquest.BuildConfig
 import com.opsc.nextquest.Objects.CurrentLocation
 import com.opsc.nextquest.R
@@ -27,8 +28,10 @@ import com.opsc.nextquest.api.ebird.eBirdRetro
 import com.opsc.nextquest.api.ebird.models.HotspotView
 import com.opsc.nextquest.api.ebird.models.hDetails
 import com.opsc.nextquest.api.maps.MapsRetro
+import com.opsc.nextquest.api.maps.adapters.StepsAdapter
 import com.opsc.nextquest.api.maps.models.MapData
 import com.opsc.nextquest.api.maps.models.MapsApi
+import com.opsc.nextquest.api.maps.models.Steps
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -70,8 +73,13 @@ class HotspotsModal: BottomSheetDialogFragment()
             adapter.setOnClickListener(object : HotspotListAdapter.OnClickListener {
                 override fun onClick(position: Int, model: HotspotView) {
                     hot.id=model.locId!!
+                    if (hot.isAdded) {
+                        hot.dismiss()
+                    }
                     hot.setGoogleMap(googleMap)
-                    hot.show(parentFragmentManager,HotspotItem.TAG)
+                    hot.man=parentFragmentManager
+                    hot.show(parentFragmentManager, HotspotItem.TAG)
+
                     activity?.runOnUiThread(Runnable {
                         close()
                     })
@@ -101,17 +109,25 @@ class HotspotItem: BottomSheetDialogFragment()
     private lateinit var current:Location
     var id:String=""
     var hotspot:hDetails= hDetails()
+    lateinit var man:FragmentManager
+
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
 
         return inflater.inflate(R.layout.hotspot_modal_view, container, false)
     }
 
+
     fun setGoogleMap(map: GoogleMap) {
         googleMap = map
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        current = Location("currentLocation")
+        current.latitude = CurrentLocation.lat
+        current.longitude = CurrentLocation.lng
         Name=view.findViewById(R.id.locname)
         Address=view.findViewById(R.id.address)
         Dist=view.findViewById(R.id.dist)
@@ -128,6 +144,7 @@ class HotspotItem: BottomSheetDialogFragment()
 
     }
 
+    //TODO: Change to helper
     //https://www.spaceotechnologies.com/blog/calculate-distance-two-gps-coordinates-google-maps-api/
     private fun distance():String{
         var current:Location= Location("currentLocation")
@@ -157,7 +174,7 @@ class HotspotItem: BottomSheetDialogFragment()
                             Name.text=hotspot.locName
                             Address.text=hotspot.hierarchicalName
                             Dist.text=distance()
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(hotspot.latitude!!,hotspot.longitude!!), 10F))
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(hotspot.latitude!!,hotspot.longitude!!), 15F))
 
                         })
 
@@ -178,15 +195,14 @@ class HotspotItem: BottomSheetDialogFragment()
 
     private fun directions()
     {
-        //this.googleMap!!.addMarker(MarkerOptions().position(origin).title("My Location"))
-        this.googleMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(CurrentLocation.LatLng, 14.5f))
-        
+        this.googleMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(CurrentLocation.LatLng, 20.5f))
         getDirections()
+        close()
 
     }
 
 
- 
+ //TODO:Change to helper
 //https://www.geeksforgeeks.org/how-to-generate-route-between-two-locations-in-google-map-in-android/
     fun decodePolyline(encoded: String): List<LatLng> {
         val poly = ArrayList<LatLng>()
@@ -220,6 +236,28 @@ class HotspotItem: BottomSheetDialogFragment()
         return poly
     }
 
+    fun addPoly(mapdata: MapData):PolylineOptions
+    {
+        val result =  ArrayList<List<LatLng>>()
+        val respObj = mapdata
+        val path =  ArrayList<LatLng>()
+        for (i in 0 until respObj.routes[0].legs[0].steps.size){
+            path.addAll(decodePolyline(respObj.routes[0].legs[0].steps[i].polyline!!.points!!))
+        }
+
+        result.add(path)
+        Log.d("testing",result.toString())
+
+        val lineoption = PolylineOptions()
+        for (i in result.indices){
+            lineoption.addAll(result[i])
+            lineoption.width(20f)
+            lineoption.color(Color.GREEN)
+            lineoption.geodesic(true)
+        }
+        return lineoption
+    }
+
     private fun getDirections()
     {
         val mapApi=MapsRetro.getInstance().create(MapsApi::class.java)
@@ -232,6 +270,7 @@ class HotspotItem: BottomSheetDialogFragment()
                         val mapdata = response.body()
                         if (mapdata != null) {
                              // Assuming the response contains multiple conditions
+
                             Log.d("testing", mapdata.toString())
                             val result =  ArrayList<List<LatLng>>()
                             val respObj = mapdata
@@ -239,6 +278,7 @@ class HotspotItem: BottomSheetDialogFragment()
                             for (i in 0 until respObj.routes[0].legs[0].steps.size){
                                 path.addAll(decodePolyline(respObj.routes[0].legs[0].steps[i].polyline!!.points!!))
                             }
+
                             result.add(path)
                             Log.d("testing",result.toString())
 
@@ -250,6 +290,11 @@ class HotspotItem: BottomSheetDialogFragment()
                                 lineoption.geodesic(true)
                             }
                             googleMap.addPolyline(lineoption)
+                            val dir:Directions= Directions()
+                            dir.data=mapdata
+                            dir.lineoption=lineoption
+                            loadFrag(dir)
+                            close()
 
                         } else {
                             Log.d("testing", "Empty or null response")
@@ -266,7 +311,7 @@ class HotspotItem: BottomSheetDialogFragment()
         }
     }
     companion object {
-        const val TAG = "ItemModalBottomSheet"
+        const val TAG = "ItemHotspotModal"
 
     }
 
@@ -274,4 +319,57 @@ class HotspotItem: BottomSheetDialogFragment()
     {
         this.dismiss()
     }
+
+    private fun loadFrag(fragment: Fragment)
+    {
+        val fragmentManager:FragmentManager  =man
+        val fragmentTransaction=fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.nav_host_fragment_activity_main,fragment).commit()
+    }
 }
+
+class DirectionModal: BottomSheetDialogFragment() {
+
+    var directions:MapData= MapData()
+    lateinit var recycler: RecyclerView
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+    {
+        return inflater.inflate(R.layout.directions_modal_view, container, false)
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?)
+    {
+        recycler=view.findViewById(R.id.modal_recycler_dir)
+        genRecycleView(directions.routes[0].legs[0].steps,recycler)
+        Log.d("testing","start of directions")
+        val fab = view.findViewById<ExtendedFloatingActionButton>(R.id.extended_fab_directions_modal)
+        fab.setOnClickListener {
+
+        }
+
+
+    }
+
+    private fun genRecycleView(data:List<Steps>, recyclerView: RecyclerView)
+    {
+        activity?.runOnUiThread(Runnable {
+            recyclerView.layoutManager = LinearLayoutManager(context)
+            val adapter = StepsAdapter(data)
+            recyclerView.adapter = adapter
+
+        })
+    }
+    companion object {
+        const val TAG = "DirectionsModal"
+
+    }
+
+    private fun close ()
+    {
+        this.dismiss()
+    }
+
+
+}
+

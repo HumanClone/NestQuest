@@ -43,11 +43,5 @@
             android:layout_marginBottom="10dp"
             android:contentDescription="TODO" />
 
-
-
     </LinearLayout>
-
-
-
-
 </FrameLayout>

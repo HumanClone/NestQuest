@@ -63,7 +63,6 @@ class MapView : Fragment() {
     private var _binding: FragmentMapViewBinding? = null
     private lateinit var locationManager: LocationManager
     private lateinit var locationListener: LocationListener
-    private val locationPermissionCode = 2
     private val permissionId = 2
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
     private var lolist: List<Address> = emptyList()
@@ -109,7 +108,13 @@ class MapView : Fragment() {
                 mapFragment.getMapAsync { googleMap->
                     hotModal.setGoogleMap(googleMap)
                 }
-                hotModal.show(parentFragmentManager,HotspotsModal.TAG)
+
+                val existingFragment = parentFragmentManager.findFragmentByTag(HotspotsModal.TAG)
+                if (existingFragment == null) {
+                    hotModal.show(parentFragmentManager, HotspotsModal.TAG)
+                }
+
+
             }
 
         }
@@ -138,10 +143,19 @@ class MapView : Fragment() {
                     {
                         val selectedSpot = spots.find { item -> item.latLng == marker.position }
                         if (selectedSpot != null) {
-                            itemModal.id = selectedSpot.locId!!
-                            itemModal.setGoogleMap(googleMap)
-                            itemModal.show(parentFragmentManager, HotspotItem.TAG)
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 15F))
+
+                            val existingFragment = parentFragmentManager.findFragmentByTag(HotspotItem.TAG)
+                            if (existingFragment == null) {
+                                itemModal.id = selectedSpot.locId!!
+                                itemModal.setGoogleMap(googleMap)
+                                itemModal.show(parentFragmentManager, HotspotItem.TAG)
+                                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 15F))
+                            }
+                            else
+                            {
+                                parentFragmentManager.beginTransaction().remove(itemModal).commit()
+                            }
+
                         }
                     }
                     true // Return true to indicate that the event is consumed.
@@ -171,14 +185,12 @@ class MapView : Fragment() {
             googleMap.uiSettings.isMyLocationButtonEnabled = false
             if (checkPermissions()) {
                 googleMap.isMyLocationEnabled = true
-            }
-
-            // Move camera to user's current location
-            mFusedLocationClient.lastLocation.addOnCompleteListener(requireActivity()) { task ->
-                val location: Location? = task.result
-                if (location != null) {
-                    val latLng = LatLng(location.latitude, location.longitude)
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
+                mFusedLocationClient.lastLocation.addOnCompleteListener(requireActivity()) { task ->
+                    val location: Location? = task.result
+                    if (location != null) {
+                        val latLng = LatLng(location.latitude, location.longitude)
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
+                    }
                 }
             }
         }
