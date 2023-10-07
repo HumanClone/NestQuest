@@ -5,7 +5,7 @@ import android.location.Location
 import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
-import com.opsc.nestquest.Objects.CurrentLocation
+import com.opsc.nestquest.Objects.UserData
 import com.opsc.nestquest.api.maps.models.MapData
 
 class DirectionHelper {
@@ -19,8 +19,8 @@ class DirectionHelper {
 
     fun distanceM(name:String,lat:Double,lng:Double):Double{
         var current: Location = Location("currentLocation")
-        current.latitude= CurrentLocation.lat
-        current.longitude= CurrentLocation.lng
+        current.latitude= UserData.lat
+        current.longitude= UserData.lng
         var destination: Location = Location(name)
         destination.latitude=lat
         destination.longitude=lng

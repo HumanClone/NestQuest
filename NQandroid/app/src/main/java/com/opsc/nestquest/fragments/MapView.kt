@@ -33,7 +33,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.opsc.nestquest.BuildConfig
-import com.opsc.nestquest.Objects.CurrentLocation
+import com.opsc.nestquest.Objects.UserData
 import com.opsc.nestquest.R
 import com.opsc.nestquest.api.ebird.eBirdApi
 import com.opsc.nestquest.api.ebird.eBirdRetro
@@ -159,6 +159,10 @@ class MapView : Fragment() {
 
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        stoplocationUpdates()
+    }
 
     @SuppressLint("MissingPermission")
     protected fun startLocationUpdates() {
@@ -193,9 +197,9 @@ class MapView : Fragment() {
     fun onLocationChanged(location: Location) {
         // New location has now been determined
         mLastLocation = location
-        CurrentLocation.lat=location.latitude
-        CurrentLocation.lng=location.longitude
-        Log.d("testing","Location call back main ${CurrentLocation.lat}, ${CurrentLocation.lng}")
+        UserData.lat=location.latitude
+        UserData.lng=location.longitude
+        Log.d("testing","Location call back main ${UserData.lat}, ${UserData.lng}")
         currentLocal()
         getNearbyHotspots()
     }
@@ -240,7 +244,7 @@ class MapView : Fragment() {
         val ebirdapi=eBirdRetro.getInstance().create((eBirdApi::class.java))
         //TODO: Change the distance parameter according to the settings
         GlobalScope.launch {
-            val call:Call<List<Hotspots>?>?=ebirdapi.nbyHotspots(CurrentLocation.lat.toString(),CurrentLocation.lng.toString(),4.0)
+            val call:Call<List<Hotspots>?>?=ebirdapi.nbyHotspots(UserData.lat.toString(),UserData.lng.toString(),4.0)
             call!!.enqueue(object : Callback<List<Hotspots>?> {
 
                 override fun onResponse(call: Call<List<Hotspots>?>?, response: Response<List<Hotspots>?>)
@@ -260,22 +264,26 @@ class MapView : Fragment() {
                         }
                         spots=spots.sortedBy{ it.distance }
                         //https://stackoverflow.com/questions/18053156/set-image-from-drawable-as-marker-in-google-map-version-2
-                        val icon = resources.getDrawable(R.drawable.hot_24)
-                        val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
-                        mapFragment.getMapAsync {googleMap->
-                            spots.map { item->
-                                googleMap.addMarker(
-                                    MarkerOptions()
-                                        .position(item.latLng!!)
-                                        .title(item.locName)
-                                        .snippet(item.numSpeciesAllTime.toString())
-                                        .icon(BitmapDescriptorFactory.fromBitmap(icon.toBitmap(icon.intrinsicWidth, icon.intrinsicHeight, null)))
-                                )
-                            hotModal.spots=spots
+                        try {
+                            val icon = resources.getDrawable(R.drawable.hot_24)
+                            val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
+                            mapFragment.getMapAsync {googleMap->
+                                spots.map { item->
+                                    googleMap.addMarker(
+                                        MarkerOptions()
+                                            .position(item.latLng!!)
+                                            .title(item.locName)
+                                            .snippet(item.numSpeciesAllTime.toString())
+                                            .icon(BitmapDescriptorFactory.fromBitmap(icon.toBitmap(icon.intrinsicWidth, icon.intrinsicHeight, null)))
+                                    )
+                                    hotModal.spots=spots
 
+                                }
                             }
-
-
+                        }
+                        catch( e:IllegalStateException)
+                        {
+                            Log.d("testing","catch map trying")
                         }
 
                         Log.d("testing","sorted: "+spots.toString())
@@ -303,9 +311,9 @@ class MapView : Fragment() {
                     if (location != null) {
                         val geocoder = Geocoder(requireContext(), Locale.getDefault())
                         lolist=  geocoder.getFromLocation(location.latitude,location.longitude,1) as List<Address>
-                        CurrentLocation.LatLng= LatLng(location.latitude,location.longitude)
-                        CurrentLocation.lat=location.latitude
-                        CurrentLocation.lng=location.longitude
+                        UserData.LatLng= LatLng(location.latitude,location.longitude)
+                        UserData.lat=location.latitude
+                        UserData.lng=location.longitude
                         Log.d("testing","Latitude:${lolist[0].latitude}\tLongitude:${lolist[0].longitude}")
                         if(conditionsNeeded)
                         {

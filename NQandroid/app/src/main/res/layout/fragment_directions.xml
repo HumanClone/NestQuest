@@ -26,6 +26,7 @@
         app:backgroundTint="?attr/colorSecondary"
         app:icon="@drawable/return_24"
         app:iconTint="@color/white" />
+
     <FrameLayout
         android:id="@+id/standard_bottom_sheet"
         style="@style/Widget.Material3.BottomSheet"

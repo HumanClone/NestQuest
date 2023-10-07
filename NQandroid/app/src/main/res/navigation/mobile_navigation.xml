@@ -14,7 +14,7 @@
         android:id="@+id/navigation_Observation"
         android:name="com.opsc.nestquest.fragments.Observations"
         android:label="@string/observations"
-        tools:layout="@layout/fragment_oberservations" />
+        tools:layout="@layout/fragment_observations" />
     <fragment
         android:id="@+id/navigation_createObservation"
         android:name="com.opsc.nestquest.fragments.CreateObservation"

@@ -13,14 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Polyline
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import com.opsc.nestquest.Objects.CurrentLocation
+import com.opsc.nestquest.Objects.UserData
 import com.opsc.nestquest.R
 import com.opsc.nestquest.activities.NavigationActivity
 import com.opsc.nestquest.api.ebird.adapters.HotspotListAdapter
@@ -129,14 +127,14 @@ class HotspotItem: BottomSheetDialogFragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         current = Location("currentLocation")
-        current.latitude = CurrentLocation.lat
-        current.longitude = CurrentLocation.lng
+        current.latitude = UserData.lat
+        current.longitude = UserData.lng
         Name=view.findViewById(R.id.locname)
         Address=view.findViewById(R.id.address)
         Dist=view.findViewById(R.id.dist)
         current= Location("currentLocation")
-        current.latitude=CurrentLocation.lat
-        current.longitude=CurrentLocation.lng
+        current.latitude=UserData.lat
+        current.longitude=UserData.lng
         getHotspotDetails(id)
         val fab = view.findViewById<ExtendedFloatingActionButton>(R.id.extended_fab_directions)
         fab.setOnClickListener {
@@ -186,8 +184,8 @@ class HotspotItem: BottomSheetDialogFragment()
 
     private fun directions()
     {
-        CurrentLocation.destLat=hotspot.latitude!!
-        CurrentLocation.destLng=hotspot.longitude!!
+        UserData.destLat=hotspot.latitude!!
+        UserData.destLng=hotspot.longitude!!
         close()
         stoplocationUpdates()
         toActivity()

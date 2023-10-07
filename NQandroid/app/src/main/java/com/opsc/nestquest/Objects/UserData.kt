@@ -2,7 +2,7 @@ package com.opsc.nestquest.Objects
 
 import com.google.android.gms.maps.model.LatLng
 
-object CurrentLocation
+object UserData
 {
     var lat:Double=0.0
     var lng:Double=0.0
