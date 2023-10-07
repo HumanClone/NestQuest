@@ -9,7 +9,7 @@
 
     <fragment
         android:id="@+id/map_fragment"
-        android:name="com.opsc.nextquest.fragments.MapView"
+        android:name="com.opsc.nestquest.fragments.MapView"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

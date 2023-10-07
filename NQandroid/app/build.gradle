@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.opsc.nextquest'
+    namespace 'com.opsc.nestquest'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.opsc.nextquest"
+        applicationId "com.opsc.nestquest"
         minSdk 33
         targetSdk 33
         versionCode 1

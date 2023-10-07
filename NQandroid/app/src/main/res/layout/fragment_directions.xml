@@ -9,11 +9,23 @@
 
     <fragment
         android:id="@+id/map_fragment_dir"
-        android:name="com.opsc.nextquest.fragments.Directions"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/extended_fab_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="end"
+        android:contentDescription="Directions"
+        android:text="Exit Navigation"
+        android:elevation="1dp"
+        android:textColor="@color/white"
+        app:backgroundTint="?attr/colorSecondary"
+        app:icon="@drawable/return_24"
+        app:iconTint="@color/white" />
     <FrameLayout
         android:id="@+id/standard_bottom_sheet"
         style="@style/Widget.Material3.BottomSheet"
@@ -21,27 +33,11 @@
         android:layout_height="match_parent"
         app:behavior_hideable="false"
         app:behavior_draggable="true"
-        app:behavior_halfExpandedRatio="0.2"
-        app:behavior_peekHeight="200dp"
+        app:behavior_halfExpandedRatio="0.5"
+        app:behavior_peekHeight="300dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-        <!-- Drag handle for accessibility -->
 
-        <!--    <FrameLayout-->
-        <!--        android:id="@+id/standard_bottom_sheet"-->
-        <!--        style="@style/Widget.Material3.BottomSheet"-->
-        <!--        android:elevation="1dp"-->
-        <!--        android:layout_gravity="center"-->
-        <!--        android:minHeight="300dp"-->
-        <!--        android:layout_width="match_parent"-->
-        <!--        android:layout_height="wrap_content"-->
-        <!--        tools:ignore="MissingConstraints"-->
-        <!--        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">-->
-
-        <!--        <com.google.android.material.bottomsheet.BottomSheetDragHandleView-->
-        <!--            android:id="@+id/drag_handle"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"/>-->
 
         <!-- Bottom sheet contents. -->
         <LinearLayout
@@ -58,31 +54,31 @@
                 android:layout_height="wrap_content"/>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/modal_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Directions"
-                android:textSize="30dp" />
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/extended_fab_loc"
-                    android:textColor="@color/white"
-                    app:tint="@color/white"
-                    android:layout_marginStart="100dp"
-                    android:layout_gravity="end"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/modal_dir_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/my_location_24"
-                    android:layout_marginBottom="10dp"
-                    android:contentDescription="TODO" />
+                    android:text="Directions"
+                    android:textSize="30dp" />
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/extended_fab_loc"
+                        android:textColor="@color/white"
+                        app:tint="@color/white"
+                        android:layout_marginStart="100dp"
+                        android:layout_gravity="end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/my_location_24"
+                        android:layout_marginBottom="10dp"
+                        android:contentDescription="TODO" />
         </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/modal_recycler_dir"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:fadeScrollbars="true"
                 android:paddingTop="20dp"

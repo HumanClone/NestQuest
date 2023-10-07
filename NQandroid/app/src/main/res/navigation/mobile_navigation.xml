@@ -7,27 +7,27 @@
 
     <fragment
         android:id="@+id/navigation_MapView"
-        android:name="com.opsc.nextquest.fragments.MapView"
+        android:name="com.opsc.nestquest.fragments.MapView"
         android:label="@string/mapview"
         tools:layout="@layout/fragment_map_view" />
     <fragment
         android:id="@+id/navigation_Observation"
-        android:name="com.opsc.nextquest.fragments.Observations"
+        android:name="com.opsc.nestquest.fragments.Observations"
         android:label="@string/observations"
         tools:layout="@layout/fragment_oberservations" />
     <fragment
         android:id="@+id/navigation_createObservation"
-        android:name="com.opsc.nextquest.fragments.CreateObservation"
+        android:name="com.opsc.nestquest.fragments.CreateObservation"
         android:label="@string/create_observation"
         tools:layout="@layout/fragment_create_observation" />
     <fragment
         android:id="@+id/navigation_Settings"
-        android:name="com.opsc.nextquest.fragments.Settings"
+        android:name="com.opsc.nestquest.fragments.Settings"
         android:label="@string/settings"
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/directions"
-        android:name="com.opsc.nextquest.fragments.Directions"
+        android:name="com.opsc.nestquest.fragments.Directions"
         android:label="fragment_directions"
         tools:layout="@layout/fragment_directions" />
 
