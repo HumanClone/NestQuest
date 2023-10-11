@@ -37,13 +37,13 @@ namespace TimeWise.Controllers
                 foreach (var item in Userdata)
                 {
                     User temp = JsonConvert.DeserializeObject<User>(((JProperty)item).Value.ToString());
-                    if(user.UserId == temp.UserId)
+                    if (user.UserId == temp.UserId)
                     {
                         noDups = false;
                     }
                 }
             }
-            if(noDups == true)
+            if (noDups == true)
             {
                 var data = user;
                 SetResponse setResponse = client.Set("users/" + data.UserId, data);
@@ -74,13 +74,24 @@ namespace TimeWise.Controllers
                 {
                     data.Email = user.Email;
                 }
-                if (user.birdSightings != null)
+                if (user.darkTheme != null)
                 {
-                    data.birdSightings = user.birdSightings;
+                    data.darkTheme = user.darkTheme;
+                }
+                if (user.maxDistance != null)
+                {
+                    data.maxDistance = user.maxDistance;
+                }
+                if (user.metricSystem != null)
+                {
+                    data.metricSystem = user.metricSystem;
+                }
+                if (user.birdSightingIds != null)
+                {
+                    data.birdSightingIds.AddRange(user.birdSightingIds);
                 }
                 SetResponse response = client.Set("users/" + UserId, data);
             }
-
         }
 
         [HttpGet("GetUser")]
