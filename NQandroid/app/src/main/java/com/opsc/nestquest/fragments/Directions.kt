@@ -133,7 +133,8 @@ class Directions : Fragment() {
         val mapApi= MapsRetro.getInstance().create(MapsApi::class.java)
         var map:MapData= MapData()
         GlobalScope.launch {
-            val call:Call<MapData> =mapApi.getdirections("${UserData.lat},${UserData.lng}","${destination.latitude},${destination.longitude}","false","walking","metric",BuildConfig.MAPS_API_KEY)
+            val call:Call<MapData> =if(UserData.user.metricSystem!!)mapApi.getdirections("${UserData.lat},${UserData.lng}","${destination.latitude},${destination.longitude}","false","walking","metric",BuildConfig.MAPS_API_KEY)
+            else mapApi.getdirections("${UserData.lat},${UserData.lng}","${destination.latitude},${destination.longitude}","false","walking","imperial",BuildConfig.MAPS_API_KEY)
             call!!.enqueue(object : Callback<MapData> {
                 override fun onResponse(call: Call<MapData>?, response: Response<MapData>)
                 {
@@ -171,7 +172,7 @@ class Directions : Fragment() {
         }
         val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment_dir) as SupportMapFragment
         mapFragment.getMapAsync { googleMap ->
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UserData.LatLng, 20f))
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(UserData.lat,UserData.lng), 20f))
             val lineoption = helper.getPolyLine(mapdata)
             poly = true;
             polyline = googleMap.addPolyline(lineoption)
@@ -262,7 +263,6 @@ class Directions : Fragment() {
                     val location: Location? = task.result
                     if (location != null) {
                         val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                        UserData.LatLng= LatLng(location.latitude,location.longitude)
                         UserData.lat=location.latitude
                         UserData.lng=location.longitude
                     }

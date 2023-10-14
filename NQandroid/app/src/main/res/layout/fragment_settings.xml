@@ -6,12 +6,135 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.Settings">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Settings Frag" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            android:textSize="30dp" />
 
+        <TextView
+            android:layout_marginTop="10dp"
+            android:id="@+id/username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Username"
+            android:textSize="30dp" />
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:textSize="20dp" />
+
+        <LinearLayout
+            android:layout_marginTop="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25dp"
+                android:autoSizeTextType="uniform"
+                android:paddingEnd="30dp"
+                android:text="Measurement System"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/system"
+                android:layout_width="300dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:layout_gravity=""
+                android:hint=""
+                app:errorEnabled="true"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/black"
+                    android:inputType="none"
+                    android:id="@+id/systemfield"/>
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_marginTop="50dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25dp"
+                android:autoSizeTextType="uniform"
+                android:layout_gravity="center"
+                android:paddingEnd="30dp"
+                android:text="Maximum Distance"/>
+            <TextView
+                android:id="@+id/unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25dp"
+                android:autoSizeTextType="uniform"
+                android:layout_gravity="center"
+                android:paddingEnd="30dp"
+                android:text=""/>
+
+        </LinearLayout>
+        <com.google.android.material.slider.Slider
+            android:id="@+id/distance"
+            app:labelBehavior="visible"
+            android:layout_marginTop="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:valueFrom="1.0"
+            android:stepSize="1.0"
+            android:valueTo="100.0"/>
+
+
+    </LinearLayout>
+
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/extended_fab_logout"
+        android:textColor="@color/white"
+        android:text="Logout"
+        app:tint="@color/white"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:icon="@drawable/logout_24"
+        app:iconTint="@color/white"
+        android:contentDescription="TODO" />
+
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/extended_fab_save"
+        android:textColor="@color/white"
+        android:text="Save"
+        app:tint="@color/white"
+        android:backgroundTint="?android:attr/colorSecondary"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="100dp"
+        android:layout_marginEnd="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:icon="@drawable/check_24"
+        app:iconTint="@color/white"
+        android:contentDescription="TODO" />
 
 
 </FrameLayout>

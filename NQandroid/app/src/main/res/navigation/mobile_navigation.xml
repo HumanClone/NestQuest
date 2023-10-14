@@ -13,7 +13,7 @@
     <fragment
         android:id="@+id/navigation_Observation"
         android:name="com.opsc.nestquest.fragments.Observations"
-        android:label="@string/observations"
+        android:label="@string/observation"
         tools:layout="@layout/fragment_observations" />
     <fragment
         android:id="@+id/navigation_createObservation"

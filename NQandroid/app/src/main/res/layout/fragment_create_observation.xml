@@ -17,26 +17,77 @@
         app:behavior_draggable="true"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Details"
+                android:textSize="30dp" />
 
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/DesLay"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Details"
-            android:textSize="30dp" />
-
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/extended_save"
-            android:textColor="@color/white"
-            android:text="Save"
-            app:tint="@color/white"
-            android:layout_gravity="bottom|center"
-            android:layout_marginBottom="20dp"
-            android:layout_marginEnd="10dp"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:icon="@drawable/add_24"
-            app:iconTint="@color/white"
-            android:contentDescription="TODO" />
+            android:maxHeight="80dp"
+            android:layout_marginTop="20dp"
+            android:hint="Descritpion"
+            app:errorEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/DesField"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/PictureLay"
+                    android:layout_width="match_parent"
+                    android:layout_height="225dp"
+                    android:hint="picture"
+                    android:backgroundTint="?attr/backgroundColor"
+                    app:hintEnabled="true"
+                    android:background="@drawable/border_image">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/ImageField"
+                        android:backgroundTint="?attr/backgroundColor"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:background="@drawable/border_image"
+                        app:srcCompat="@drawable/add_pic_24"
+                        />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/extended_save"
+                android:textColor="@color/white"
+                android:text="Save"
+                app:tint="@color/white"
+                android:layout_gravity="bottom|center"
+                android:layout_marginBottom="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/add_24"
+                app:iconTint="@color/white"
+                android:contentDescription="TODO" />
+        </LinearLayout>
+
 
     </FrameLayout>
 
