@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="32dp"
+    android:background="#556B2F"> <!-- Olive green background -->
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_centerInParent="true"
+      android:orientation="vertical"> <!-- Centering content -->
+
+    <LinearLayout
+        android:id="@+id/layout_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+      <!-- White text -->
+
+      <TextView
+          android:id="@+id/textView_title"
+          android:layout_width="wrap_content"
+          android:layout_gravity="center"
+          android:layout_height="wrap_content"
+          android:text="Register"
+          android:textColor="#FFFFFF"
+          android:textSize="30sp"
+          android:textStyle="bold" />
+
+      <!-- White text -->
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/editText_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_title"
+        android:layout_marginTop="32dp"
+        android:hint="Username"
+        android:inputType="text"
+        android:textColor="#FFFFFF" />
+
+    <EditText
+        android:id="@+id/editText_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:textColor="#FFFFFF" />
+
+    <EditText
+        android:id="@+id/editText_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editText_username"
+        android:layout_marginTop="16dp"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/textView_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="Have an account already? Login here."
+        android:textColor="#FFFFFF"
+        android:textSize="16sp" />
+
+    <!-- White text -->
+
+    <Button
+        android:id="@+id/button_register"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#228B22"
+        android:text="REGISTER"
+        android:textColor="#FFFFFF" /> <!-- Forest green button -->
+
+
+  </LinearLayout>
+</RelativeLayout>

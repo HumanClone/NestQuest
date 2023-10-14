@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         val navView: BottomNavigationView = binding.navView
 
-        loadFrag(Observations())
+        loadFrag(MapView())
         navView.selectedItemId=R.id.navigation_MapView
         navView.setOnItemSelectedListener {  item ->
             when(item.itemId) {

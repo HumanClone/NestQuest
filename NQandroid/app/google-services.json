@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "855352840975",
+    "firebase_url": "https://nestquest-dbbdd-default-rtdb.firebaseio.com",
+    "project_id": "nestquest-dbbdd",
+    "storage_bucket": "nestquest-dbbdd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:855352840975:android:254bb1d6a0cf55bb05a47a",
+        "android_client_info": {
+          "package_name": "com.opsc.nestquest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABDcYgRiEb2tl9vMABO_gUFSQFmOlbhno"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
