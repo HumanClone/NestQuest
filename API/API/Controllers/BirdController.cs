@@ -14,8 +14,8 @@ namespace TimeWise.Controllers
     {
         static IFirebaseConfig config = new FirebaseConfig
         {
-            AuthSecret = "AIzaSyCESmHZ8Sj1R6b5qlhMQRTldOd1nodJKwU",
-            BasePath = "https://opsc-8b95e-default-rtdb.firebaseio.com"
+            AuthSecret = "AIzaSyAqJvZ0rMbtbDf870COrYrQA--95uDegw8",
+            BasePath = "https://nestquest-dbbdd-default-rtdb.firebaseio.com/"
         };
         IFirebaseClient client = new FireSharp.FirebaseClient(config);
 
@@ -88,6 +88,12 @@ namespace TimeWise.Controllers
         public void Delete(string? BirdId)
         {
             FirebaseResponse response = client.Delete("birds/" + BirdId);
+        }
+        [HttpGet("PopulateBirds")]
+        public void PopulateBirds()
+        {
+
+            dynamic json = JsonConvert.DeserializeObject("");
         }
     }
 }

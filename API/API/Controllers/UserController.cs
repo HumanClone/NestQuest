@@ -5,6 +5,7 @@ using FireSharp.Response;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using API.Models;
+using static System.Net.WebRequestMethods;
 
 namespace TimeWise.Controllers
 {
@@ -14,8 +15,8 @@ namespace TimeWise.Controllers
     {
         static IFirebaseConfig config = new FirebaseConfig
         {
-            AuthSecret = "AIzaSyCESmHZ8Sj1R6b5qlhMQRTldOd1nodJKwU",
-            BasePath = "https://opsc-8b95e-default-rtdb.firebaseio.com"
+            AuthSecret = "AIzaSyAqJvZ0rMbtbDf870COrYrQA--95uDegw8",
+            BasePath = "https://nestquest-dbbdd-default-rtdb.firebaseio.com/"
         };
         IFirebaseClient client = new FireSharp.FirebaseClient(config);
 
