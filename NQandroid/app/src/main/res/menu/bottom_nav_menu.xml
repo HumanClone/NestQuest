@@ -5,7 +5,7 @@
     <item
         android:id="@+id/navigation_Observation"
         android:icon="@drawable/eye_24"
-        android:title="@string/observations" />
+        android:title="@string/observation" />
 
 
     <item

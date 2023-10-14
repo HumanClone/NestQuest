@@ -238,13 +238,17 @@ class MapView : Fragment() {
         _binding = null
     }
 
+    fun milesToKilometers(miles: Double): Double {
+        return miles * 1.60934
+    }
 
     private fun getNearbyHotspots()
     {
         val ebirdapi=eBirdRetro.getInstance().create((eBirdApi::class.java))
         //TODO: Change the distance parameter according to the settings
         GlobalScope.launch {
-            val call:Call<List<Hotspots>?>?=ebirdapi.nbyHotspots(UserData.lat.toString(),UserData.lng.toString(),4.0)
+            val call:Call<List<Hotspots>?>? = if(UserData.user.metricSystem!!) ebirdapi.nbyHotspots(UserData.lat.toString(),UserData.lng.toString(),UserData.user.maxDistance!!.toDouble())
+            else ebirdapi.nbyHotspots(UserData.lat.toString(),UserData.lng.toString(),milesToKilometers(UserData.user.maxDistance!!.toDouble()))
             call!!.enqueue(object : Callback<List<Hotspots>?> {
 
                 override fun onResponse(call: Call<List<Hotspots>?>?, response: Response<List<Hotspots>?>)
@@ -311,7 +315,6 @@ class MapView : Fragment() {
                     if (location != null) {
                         val geocoder = Geocoder(requireContext(), Locale.getDefault())
                         lolist=  geocoder.getFromLocation(location.latitude,location.longitude,1) as List<Address>
-                        UserData.LatLng= LatLng(location.latitude,location.longitude)
                         UserData.lat=location.latitude
                         UserData.lng=location.longitude
                         Log.d("testing","Latitude:${lolist[0].latitude}\tLongitude:${lolist[0].longitude}")

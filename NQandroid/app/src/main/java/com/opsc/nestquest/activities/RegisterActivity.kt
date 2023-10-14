@@ -18,8 +18,17 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
+import com.opsc.nestquest.Objects.UserData
 import com.opsc.nestquest.R
+import com.opsc.nestquest.api.nestquest.NQAPI
+import com.opsc.nestquest.api.nestquest.models.NQRetro
+import com.opsc.nestquest.api.nestquest.models.User
 import com.opsc.nestquest.databinding.ActivityRegisterBinding
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -44,6 +53,7 @@ private lateinit var binding: ActivityRegisterBinding
         registerButton = findViewById(R.id.button_register)
         loginTextView = findViewById(R.id.textView_login)
 
+        //getUserNorm()
         registerButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val username=usernameEditText.text.toString()
@@ -78,27 +88,87 @@ private lateinit var binding: ActivityRegisterBinding
                     val profileUpdates = userProfileChangeRequest {
                     displayName = usernameEditText.text.toString()
                      }
-
-                userf!!.updateProfile(profileUpdates)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.d("register", "User profile updated.")
+                    userf!!.updateProfile(profileUpdates)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Log.d("register", "User profile updated.")
+                            }
                         }
-                    }
 
+                    val user=User(
+                        UserId =userf!!.uid.toString(),
+                        Name=usernameEditText.text.toString(),
+                        Email = email,
+                        birdSightingIds = listOf(),
+                        darkTheme = false,
+                        maxDistance = 10.0.toFloat(),
+                        metricSystem = true
+                    )
+
+                    UserData.user=user
+                    addUser(user)
                     val intent = Intent(this,MainActivity::class.java)
                     startActivity(intent)
                     Toast.makeText(baseContext, "Registration Successful.", Toast.LENGTH_SHORT).show()
                     finish()
                 }
                     else {
-                    Toast.makeText(baseContext, "Invalid Email.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(baseContext, "Invalid Email or Password.", Toast.LENGTH_SHORT).show()
                 }
             }
     }
 
 
+    private fun addUser(user: User)
+    {
+        val nqApi = NQRetro.getInstance().create(NQAPI::class.java)
 
+        // passing data from our text fields to our model class.
+        Log.d("testing","String of Object  "+ user.toString())
+        GlobalScope.launch{
+            nqApi.addUser(user).enqueue(
+                object : Callback<User> {
+
+                    override fun onFailure(call: Call<User>, t: Throwable) {
+                        Log.d("testing", "Failure")
+                    }
+
+                    override fun onResponse(call: Call<User>, response: Response<User>) {
+                        val addedUser = response.body()
+                        if (response.isSuccessful)
+                        {
+                            Log.d("testing", addedUser.toString()+"worked!!")
+                        }
+                        Log.d("testing", addedUser.toString()+" fail")
+                    }
+
+                })
+        }
+    }
+
+    private fun getUserNorm()
+    { Log.d("testing","click")
+
+
+
+        val nqapi = NQRetro.getInstance().create(NQAPI::class.java)
+        // launching a new coroutine
+        GlobalScope.launch {
+            try {
+
+
+                val call:List<User> =nqapi.getusers()
+                Log.d("testing", call.toString())
+            }
+            catch (e:kotlin.KotlinNullPointerException)
+            {
+                Log.d("testing","no data")
+            }
+
+        }
+
+
+    }
 
 
 }

@@ -85,10 +85,10 @@ class DirectionHelper {
 
     fun convertDistance(distanceInMeters: Double): String {
         //TODO:This needs to check the system
-        return if (true) {
+        return if (UserData.user.metricSystem!!) {
             String.format("%.2f",distanceInMeters / 1000.0) + " km"// Convert to kilometers
         } else {
-            String.format("%.2f",distanceInMeters * 0.000621371).toString() +" mi." // Convert to miles
+            String.format("%.2f",distanceInMeters * 0.000621371).toString() +" mi" // Convert to miles
         }
     }
 }
