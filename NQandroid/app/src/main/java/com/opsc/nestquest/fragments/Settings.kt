@@ -69,6 +69,7 @@ class Settings : Fragment() {
         unit=view.findViewById(R.id.unit)
         distance=view.findViewById(R.id.distance)
 
+
         username.text=UserData.user.name
         email.text=UserData.user.email
         distance.value=UserData.user.maxDistance!!
@@ -111,6 +112,7 @@ class Settings : Fragment() {
     private fun save()
     {
         UserData.user.maxDistance=distance.value
+
         UserData.user.metricSystem = systemField.text.toString() == "Metric"
         Log.d("testing","${UserData.user.maxDistance}\t${UserData.user.metricSystem}")
         saveUser(UserData.user.userId!!,UserData.user)
@@ -138,6 +140,7 @@ class Settings : Fragment() {
                 object : Callback<User> {
 
                     override fun onFailure(call: Call<User>, t: Throwable) {
+
                         Log.d("testing", "It worked")
                     }
 

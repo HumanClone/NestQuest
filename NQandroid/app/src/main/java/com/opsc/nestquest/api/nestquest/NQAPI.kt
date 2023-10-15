@@ -10,6 +10,7 @@ import retrofit2.http.*
 interface NQAPI {
 
 
+
     //works
     @GET("/User/GetUser")
     suspend fun getUser(@Query("userId")userId:String):User
@@ -35,18 +36,18 @@ interface NQAPI {
 
 
     //works
+
     @Headers("Content-Type: application/json")
     @POST("/User/AddUser")
     fun addUser(@Body user:User): Call<User>
 
 
-    //unknown
     @Headers("Content-Type: application/json")
     @POST("Picture/AddPicture")
     fun addPic(@Body picture: Picture?): Call<Picture>
 
 
-    //Works
+
     @Headers("Content-Type: application/json")
     @POST("/User/EditUser")
     fun editUser(@Query("UserId")userid:String,@Body user:User): Call<User>

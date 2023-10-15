@@ -1,5 +1,6 @@
 package com.opsc.nestquest.api.nestquest.models
 
+
 import com.google.gson.annotations.SerializedName
 
 data class User(
@@ -10,6 +11,7 @@ data class User(
    @SerializedName("darkTheme"       ) var darkTheme       : Boolean? = null,
    @SerializedName("maxDistance"     ) var maxDistance     : Float?     = null,
    @SerializedName("metricSystem"    ) var metricSystem    : Boolean? = null
+
 
 )
 

@@ -44,6 +44,7 @@ class RegisterActivity : AppCompatActivity() {
 private lateinit var binding: ActivityRegisterBinding
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -56,6 +57,7 @@ private lateinit var binding: ActivityRegisterBinding
 
         auth = FirebaseAuth.getInstance()
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+
         actionBar?.hide()
         usernameEditText = findViewById(R.id.editText_username)
         emailEditText = findViewById(R.id.editText_email)
@@ -63,7 +65,7 @@ private lateinit var binding: ActivityRegisterBinding
         registerButton = findViewById(R.id.button_register)
         loginTextView = findViewById(R.id.textView_login)
 
-        //getUserNorm()
+       
         registerButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val username=usernameEditText.text.toString()
@@ -106,9 +108,11 @@ private lateinit var binding: ActivityRegisterBinding
                         }
 
                     val user=User(
+
                         userId =userf!!.uid.toString(),
                         name=usernameEditText.text.toString(),
                         email = email,
+
                         birdSightingIds = listOf(),
                         darkTheme = false,
                         maxDistance = 10.0.toFloat(),
@@ -155,6 +159,7 @@ private lateinit var binding: ActivityRegisterBinding
                 })
         }
     }
+
 
 
 

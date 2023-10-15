@@ -30,7 +30,9 @@ import com.opsc.nestquest.Objects.UserData
 import com.opsc.nestquest.R
 import com.opsc.nestquest.api.nestquest.adapters.observationAdapter
 import com.opsc.nestquest.api.nestquest.models.Observation
+
 import java.util.Locale
+
 
 
 class Observations : Fragment() {
@@ -55,11 +57,13 @@ class Observations : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationManager=requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         recycler=view.findViewById(R.id.recycler_observation)
         genRecycleView(UserData.observations,recycler)
         getLocation()
+
         val fab2=view.findViewById<ExtendedFloatingActionButton>(R.id.extended_fab_hot)
         fab2.setOnClickListener {
             getLocation()
@@ -129,7 +133,20 @@ class Observations : Fragment() {
         }
         return false
     }
-
+    private fun genRecycleView(data:List<Observation>, recyclerView: RecyclerView)
+    {
+        activity?.runOnUiThread(Runnable {
+            recyclerView.layoutManager = LinearLayoutManager(context)
+            val adapter = observationAdapter(data)
+            recyclerView.adapter = adapter
+//            adapter.setOnClickListener(object : observationAdapter.OnClickListener {
+//                override fun onClick(position: Int, model: HotspotView) {
+//
+//
+//                }
+//            })
+        })
+    }
 
     private fun requestPermissions()
     {

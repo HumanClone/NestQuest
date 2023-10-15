@@ -34,6 +34,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -41,6 +42,7 @@ class LoginActivity : AppCompatActivity() {
         )
         setContentView(R.layout.activity_log_reg)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+
         auth = FirebaseAuth.getInstance()
 
         val usernameEditText = findViewById<EditText>(R.id.editText_username)
@@ -56,7 +58,6 @@ class LoginActivity : AppCompatActivity() {
         loginButton.setOnClickListener {
             val email = usernameEditText.text.toString()
             val password = passwordEditText.text.toString()
-            // Bypass the login process
 
             if (validateForm(email, password)) {
                 loginUser(email, password)
@@ -86,6 +87,8 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(baseContext, "Login Successful.", Toast.LENGTH_SHORT).show()
                     val userf = Firebase.auth.currentUser
                     getUser(userf!!.uid.toString())
+
+
                 } else {
                     Toast.makeText(baseContext, "Invalid Email or Password.", Toast.LENGTH_SHORT).show()
                 }
@@ -100,6 +103,7 @@ class LoginActivity : AppCompatActivity() {
         }
         passwordEditText.setSelection(passwordEditText.text.length)
     }
+
 
 
 
@@ -131,6 +135,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
+
     private fun getOb()
     {
         val timeWiseApi = NQRetro.getInstance().create(NQAPI::class.java)
@@ -139,7 +144,9 @@ class LoginActivity : AppCompatActivity() {
             try {
 
 
+
                 val call:List<Observation> = timeWiseApi.getObserve(UserData.user.userId!!)
+
                 if (call.isEmpty())
                 {
                     Log.d("testing","no values ")
@@ -152,6 +159,7 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
 
+
             }
             catch (e:kotlin.KotlinNullPointerException)
             {
@@ -160,11 +168,5 @@ class LoginActivity : AppCompatActivity() {
 
         }
     }
-
-
-
-
-
-
 
 }

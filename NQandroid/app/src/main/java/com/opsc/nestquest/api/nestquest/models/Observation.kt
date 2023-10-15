@@ -1,5 +1,6 @@
 package com.opsc.nestquest.api.nestquest.models
 
+
 import com.google.gson.annotations.SerializedName
 import java.time.LocalDateTime
 
