@@ -1,31 +1,20 @@
 package com.opsc.nestquest.fragments
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Geocoder
-import android.location.Location
-import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
@@ -36,8 +25,6 @@ import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 import com.opsc.nestquest.Objects.UserData
 import com.opsc.nestquest.R
-import com.opsc.nestquest.api.ebird.adapters.HotspotListAdapter
-import com.opsc.nestquest.api.ebird.models.HotspotView
 import com.opsc.nestquest.api.nestquest.NQAPI
 import com.opsc.nestquest.api.nestquest.adapters.observationAdapter
 import com.opsc.nestquest.api.nestquest.models.NQRetro
@@ -48,21 +35,16 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.time.LocalDate
-import java.util.Date
-import java.util.Locale
+import java.time.LocalDateTime
 
 
 class CreateObservation : BottomSheetDialogFragment() {
     // TODO: Rename and change types of parameters
     lateinit var imageView: ShapeableImageView
     var link:String=""
-    val storageRef= Firebase.storage.reference
+    var storageRef= Firebase.storage.reference
     lateinit var des: TextInputEditText
     lateinit var deslay: TextInputLayout
-    private lateinit var locationManager: LocationManager
-    private val permissionId = 2
-    private lateinit var mFusedLocationClient: FusedLocationProviderClient
     lateinit var recycler: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,8 +61,7 @@ class CreateObservation : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        locationManager=requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
         imageView=view.findViewById(R.id.ImageField)
         deslay=view.findViewById(R.id.DesLay)
         des=view.findViewById(R.id.DesField)
@@ -100,17 +81,16 @@ class CreateObservation : BottomSheetDialogFragment() {
         fab2.setOnClickListener {
             if(!des.text.isNullOrEmpty())
             {
-                getLocation()
-                val ob:Observation= Observation(null,UserData.user.UserId,null,LocalDate.now(),"${UserData.lat},${UserData.lng}",null)
+                val ob:Observation= Observation(null,UserData.user.userId,null,
+                    LocalDateTime.now().toString(),"${UserData.lat},${UserData.lng}", description =des.text.toString() , picture = null)
                 if(!link.isNullOrEmpty())
                 {
-                    val picture = Picture(null,UserData.user.UserId,link)
-                    addPicture(picture)
-                    var pl:List<Picture> = listOf( picture)
-                    ob.pictures=pl
+                    //val picture = Picture(null,userId = UserData.user.userId, description = link)
+                    //addPicture(picture)
+                    ob.picture=link
                 }
-                addObservation(ob)
-                genRecycleView(UserData.observations,recycler)
+                    addObservation(ob)
+                    genRecycleView(UserData.observations,recycler)
             }
             else
             {
@@ -120,10 +100,14 @@ class CreateObservation : BottomSheetDialogFragment() {
         
         
     }
-
+    private fun close ()
+    {
+        this.dismiss()
+    }
 
     private fun genRecycleView(data:List<Observation>, recyclerView: RecyclerView)
     {
+        Log.d("testing","at recycler")
         activity?.runOnUiThread(Runnable {
             recyclerView.layoutManager = LinearLayoutManager(context)
             val adapter = observationAdapter(data)
@@ -156,14 +140,15 @@ class CreateObservation : BottomSheetDialogFragment() {
                 // extract the file name with extension
                 val sd = getFileName(requireContext(), imageUri!!)
 
+
                 // Upload Task with upload to directory 'file'
                 // and name of the file remains same
-                val uploadTask = storageRef.child("${UserData.user.UserId}/$sd").putFile(imageUri)
+                val uploadTask = storageRef.child("${UserData.user.userId}/$sd").putFile(imageUri)
 
                 // On success, download the file URL and display it
                 uploadTask.addOnSuccessListener {
                     // using glide library to display the image
-                    storageRef.child("${UserData.user.UserId}/$sd").downloadUrl.addOnSuccessListener {
+                    storageRef.child("${UserData.user.userId}/$sd").downloadUrl.addOnSuccessListener {
 
                         Glide.with(this@CreateObservation)
                             .load(it)
@@ -196,47 +181,49 @@ class CreateObservation : BottomSheetDialogFragment() {
     }
 
 
-    private fun addPicture(pic: Picture)
-    {
-        val timewiseapi = NQRetro.getInstance().create(NQAPI::class.java)
-
-        // passing data from our text fields to our model class.
-        Log.d("testing", "String of Object  $pic")
-        GlobalScope.launch{
-            timewiseapi.addPic(pic).enqueue(
-                object : Callback<Picture> {
-
-                    override fun onFailure(call: Call<Picture>, t: Throwable) {
-                        Log.d("testing", "Failure")
-                    }
-
-                    override fun onResponse(call: Call<Picture>, response: Response<Picture>) {
-                        val addedUser = response.body()
-                        if (response.isSuccessful)
-                        {
-                            Log.d("testing", addedUser.toString()+"worked!!")
-                        }
-                        Log.d("testing", addedUser.toString()+" fail pic")
-                    }
-
-                })
-        }
-    }
+//    private fun addPicture(pic: Picture)
+//    {
+//        val nqAPI = NQRetro.getInstance().create(NQAPI::class.java)
+//
+//        // passing data from our text fields to our model class.
+//        Log.d("testing", "String of Object  $pic")
+//        GlobalScope.launch{
+//            nqAPI.addPic(pic).enqueue(
+//                object : Callback<Picture> {
+//
+//                    override fun onFailure(call: Call<Picture>, t: Throwable) {
+//                        Log.d("testing", "Failure")
+//                    }
+//
+//                    override fun onResponse(call: Call<Picture>, response: Response<Picture>) {
+//                        val addedUser = response.body()
+//                        if (response.isSuccessful)
+//                        {
+//                            Log.d("testing", addedUser.toString()+"worked!!")
+//                        }
+//                        Log.d("testing", addedUser.toString()+" fail pic")
+//                    }
+//
+//                })
+//        }
+//    }
 
     private fun addObservation(ob:Observation)
     {
-        val timewiseapi = NQRetro.getInstance().create(NQAPI::class.java)
+        val nqAPI = NQRetro.getInstance().create(NQAPI::class.java)
 
         // passing data from our text fields to our model class.
         Log.d("testing", "String of Object  $ob")
         Log.d("testing", Gson().toJson(ob))
         GlobalScope.launch{
-            timewiseapi.addObserve(ob).enqueue(
+            nqAPI.addObserve(ob).enqueue(
                 object : Callback<Observation> {
 
                     override fun onFailure(call: Call<Observation>, t: Throwable) {
-                        UserData.observations+ob
-                        Log.d("testing", "Failure")
+                        UserData.observations.add(ob)
+                        Log.d("testing", "it worked")
+                        genRecycleView(UserData.observations,recycler)
+                        getOb()
 
                     }
 
@@ -254,82 +241,40 @@ class CreateObservation : BottomSheetDialogFragment() {
     }
     
 
-
-    @SuppressLint("MissingPermission")
-    private fun getLocation() {
-        if (checkPermissions()) {
-            if (isLocationEnabled()) {
-                mFusedLocationClient.lastLocation.addOnCompleteListener(requireActivity()) { task ->
-                    val location: Location? = task.result
-                    if (location != null) {
-                        val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                        UserData.lat=location.latitude
-                        UserData.lng=location.longitude
-                       
-                    }
-                }
-            } else {
-                Toast.makeText(requireContext(), "Please turn on location", Toast.LENGTH_LONG).show()
-                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                startActivity(intent)
-            }
-        } else {
-            requestPermissions()
-        }
-    }
-
-
-    private fun isLocationEnabled(): Boolean {
-
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-            LocationManager.NETWORK_PROVIDER
-        )
-    }
-
-    private fun checkPermissions(): Boolean
-    {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            return true
-        }
-        return false
-    }
-
-
-    private fun requestPermissions()
-    {
-        ActivityCompat.requestPermissions(requireActivity(),
-            arrayOf(
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ),
-            permissionId
-        )
-    }
-
-    @SuppressLint("MissingSuperCall")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray)
-    {
-        Log.d("testing",requestCode.toString())
-        if (requestCode == permissionId)
-        {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED))
-            {
-                getLocation()
-            }
-        }
-    }
     companion object {
         const val TAG = "CreateObservation"
 
     }
 
+
+    private fun getOb()
+    {
+        val timeWiseApi = NQRetro.getInstance().create(NQAPI::class.java)
+        // launching a new coroutine
+        GlobalScope.launch {
+            try {
+
+
+                val call:List<Observation> = timeWiseApi.getObserve(UserData.user.userId!!)
+                if (call.isEmpty())
+                {
+                    Log.d("testing","no values ")
+                }
+
+                Log.d("testing", call.toString())
+                UserData.observations.clear()
+                UserData.observations=call.toMutableList<Observation>()
+                Log.d("testing", UserData.observations.toString())
+                genRecycleView(UserData.observations,recycler)
+                close()
+
+            }
+            catch (e:kotlin.KotlinNullPointerException)
+            {
+                Log.d("testing","no data")
+            }
+
+        }
+    }
 
 }

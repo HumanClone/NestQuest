@@ -9,31 +9,44 @@ import retrofit2.http.*
 
 interface NQAPI {
 
+
+    //works
     @GET("/User/GetUser")
-    suspend fun getUser(@Query("UserId")userId:String):Call<User>
+    suspend fun getUser(@Query("userId")userId:String):User
 
-    @GET("/User/GetAllUsers")
-    suspend fun getusers():List<User>
 
-    @GET("/BirdSighting")
+
+    //Doesnt exist yet
+    @GET("/BirdSightingSighting/GetAllBirdSightingsForUser")
     suspend fun getObserve(@Query("userId")userId: String):List<Observation>
 
 
+    //unknown
+    @GET("/BirdSightingSighting/GetBirdSighting")
+    suspend fun getObserveID(@Query("birdSightingId")Id: String):Observation
 
 
+
+
+    //works
     @Headers("Content-Type: application/json")
-    @POST("/BirdSighting/AddBirdSighting")
+    @POST("/BirdSightingSighting/AddBirdSighting")
     fun addObserve(@Body observation: Observation):Call<Observation>
 
+
+    //works
     @Headers("Content-Type: application/json")
     @POST("/User/AddUser")
     fun addUser(@Body user:User): Call<User>
 
+
+    //unknown
     @Headers("Content-Type: application/json")
     @POST("Picture/AddPicture")
     fun addPic(@Body picture: Picture?): Call<Picture>
 
 
+    //Works
     @Headers("Content-Type: application/json")
     @POST("/User/EditUser")
     fun editUser(@Query("UserId")userid:String,@Body user:User): Call<User>

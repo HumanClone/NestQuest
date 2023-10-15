@@ -1,13 +1,16 @@
 package com.opsc.nestquest.api.nestquest.models
 
-import java.time.LocalDate
+import com.google.gson.annotations.SerializedName
+import java.time.LocalDateTime
 
 data class Observation(
-    var birdSightingId: String?,
-    var userId: String?,
-    var birdId: String?,
-    var dateSeen: LocalDate,
-    var coordinates: String?,
-    var pictures: List<Picture>?
+    @SerializedName("birdSightingId" ) var birdSightingId : String? = null,
+    @SerializedName("userId"         ) var userId         : String? = null,
+    @SerializedName("birdId"         ) var birdId         : String? = null,
+    @SerializedName("dateSeen"       ) var dateSeen       : String? = null,
+    @SerializedName("coordinates"    ) var coordinates    : String? = null,
+    @SerializedName("picture"        ) var picture        : String? = null,
+    @SerializedName("description"    ) var description    : String? = null
+
 )
 

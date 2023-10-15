@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -30,8 +33,14 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         setContentView(R.layout.activity_log_reg)
-        actionBar?.hide()
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         auth = FirebaseAuth.getInstance()
 
         val usernameEditText = findViewById<EditText>(R.id.editText_username)
@@ -48,13 +57,7 @@ class LoginActivity : AppCompatActivity() {
             val email = usernameEditText.text.toString()
             val password = passwordEditText.text.toString()
             // Bypass the login process
-            if (email == "test" && password == "test") {
-                Toast.makeText(baseContext, "Login Bypassed.", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-                return@setOnClickListener
-            } // Bypass the login process
+
             if (validateForm(email, password)) {
                 loginUser(email, password)
             }
@@ -83,9 +86,6 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(baseContext, "Login Successful.", Toast.LENGTH_SHORT).show()
                     val userf = Firebase.auth.currentUser
                     getUser(userf!!.uid.toString())
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    finish() // Prevents user from returning to login screen using back button
                 } else {
                     Toast.makeText(baseContext, "Invalid Email or Password.", Toast.LENGTH_SHORT).show()
                 }
@@ -102,41 +102,33 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
+
+
     private fun getUser(id:String)
-    {
-        val nqApi = NQRetro.getInstance().create(NQAPI::class.java)
+    { Log.d("testing","click")
+
+        val timeWiseApi = NQRetro.getInstance().create(NQAPI::class.java)
         // launching a new coroutine
         GlobalScope.launch {
-            val call: Call<User> = nqApi.getUser(id)
-            call.enqueue(object : Callback<User> {
-                override fun onResponse(
-                    call: Call<User>,
-                    response: Response<User>
-                ) {
-                    try {
-                        if (response.isSuccessful()) {
-                            Log.d("testing",response.body()!!.toString())
-                            val root: User = response.body()!!
-                            UserData.user=root
+            try {
 
-                        }
-                    }
-                    catch(e:java.lang.NullPointerException)
-                    {
-                        Log.d("testing","no data")
-                    }
-                }
+                val call:User = timeWiseApi.getUser(id)
+                UserData.user=call
+                getOb()
+                Log.d("testing", call.toString())
+            }
+            catch (e:kotlin.KotlinNullPointerException)
+            {
+                Log.d("testing","no data")
+            }
+            catch(e:Exception)
+            {
+                Toast.makeText(this@LoginActivity, "Fail to get the data..", Toast.LENGTH_SHORT).show()
 
-                override fun onFailure(call: Call<User>, t: Throwable?) {
-                    // displaying an error message in toast
-//                    Toast.makeText(this@Test, "Fail to get the data..", Toast.LENGTH_SHORT)
-//                        .show()
-                    Log.d("testing","no data")
-                }
-            })
+            }
         }
-    }
 
+    }
 
 
     private fun getOb()
@@ -147,7 +139,7 @@ class LoginActivity : AppCompatActivity() {
             try {
 
 
-                val call:List<Observation> = timeWiseApi.getObserve(UserData.user.UserId!!)
+                val call:List<Observation> = timeWiseApi.getObserve(UserData.user.userId!!)
                 if (call.isEmpty())
                 {
                     Log.d("testing","no values ")
@@ -155,7 +147,10 @@ class LoginActivity : AppCompatActivity() {
 
                 Log.d("testing", call.toString())
                 UserData.observations.clear()
-                UserData.observations+call
+                UserData.observations=call.toMutableList()
+                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
 
             }
             catch (e:kotlin.KotlinNullPointerException)
@@ -165,4 +160,11 @@ class LoginActivity : AppCompatActivity() {
 
         }
     }
+
+
+
+
+
+
+
 }

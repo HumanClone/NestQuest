@@ -3,6 +3,9 @@ package com.opsc.nestquest.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -41,11 +44,18 @@ class RegisterActivity : AppCompatActivity() {
 private lateinit var binding: ActivityRegisterBinding
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        setContentView(R.layout.activity_register)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
+        setContentView(R.layout.activity_register)
+
         auth = FirebaseAuth.getInstance()
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         actionBar?.hide()
         usernameEditText = findViewById(R.id.editText_username)
         emailEditText = findViewById(R.id.editText_email)
@@ -96,9 +106,9 @@ private lateinit var binding: ActivityRegisterBinding
                         }
 
                     val user=User(
-                        UserId =userf!!.uid.toString(),
-                        Name=usernameEditText.text.toString(),
-                        Email = email,
+                        userId =userf!!.uid.toString(),
+                        name=usernameEditText.text.toString(),
+                        email = email,
                         birdSightingIds = listOf(),
                         darkTheme = false,
                         maxDistance = 10.0.toFloat(),
@@ -146,29 +156,6 @@ private lateinit var binding: ActivityRegisterBinding
         }
     }
 
-    private fun getUserNorm()
-    { Log.d("testing","click")
-
-
-
-        val nqapi = NQRetro.getInstance().create(NQAPI::class.java)
-        // launching a new coroutine
-        GlobalScope.launch {
-            try {
-
-
-                val call:List<User> =nqapi.getusers()
-                Log.d("testing", call.toString())
-            }
-            catch (e:kotlin.KotlinNullPointerException)
-            {
-                Log.d("testing","no data")
-            }
-
-        }
-
-
-    }
 
 
 }

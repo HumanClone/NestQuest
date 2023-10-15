@@ -23,7 +23,7 @@
         android:orientation="horizontal">
 
         <com.google.android.material.imageview.ShapeableImageView
-            android:layout_width="80dp"
+            android:layout_width="150dp"
             android:minHeight="30dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
@@ -60,10 +60,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="20dp">
-
                 <TextView
-                    android:id="@+id/Cordinates"
-                    android:layout_width="280dp"
+                    android:id="@+id/lat"
+                    android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:textSize="16dp"
                     android:layout_marginEnd="16dp"
@@ -72,7 +71,22 @@
                     android:paddingEnd="70dp"
                     android:text="Co-ordinates" />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp">
 
+                <TextView
+                    android:id="@+id/lng"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:textSize="16dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:textStyle="bold"
+                    android:paddingEnd="70dp"
+                    android:text="Co-ordinates" />
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -80,13 +94,14 @@
                 <TextView
                     android:id="@+id/description"
                     android:layout_width="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:maxWidth="200dp"
                     android:layout_height="wrap_content"
                     android:maxHeight="60dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginBottom="16dp"
                     android:text="Description"
-                    android:textSize="15dp"
+                    android:textSize="20dp"
                     tools:ignore="TextSizeCheck" />
 
             </LinearLayout>

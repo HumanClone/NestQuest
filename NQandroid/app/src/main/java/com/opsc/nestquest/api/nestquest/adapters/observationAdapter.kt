@@ -22,7 +22,8 @@ class observationAdapter (var data: List<Observation>) :
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var Date:TextView=view.findViewById(R.id.date)
         var Description:TextView=view.findViewById(R.id.description)
-        var co:TextView=view.findViewById(R.id.Cordinates)
+        var lat:TextView=view.findViewById(R.id.lat)
+        var lng:TextView=view.findViewById(R.id.lng)
         var Picture: ImageView =view.findViewById(R.id.picture)
 
     }
@@ -41,12 +42,13 @@ class observationAdapter (var data: List<Observation>) :
         var system:Boolean=true
         val item = data[position]
         holder.Date.text=item.dateSeen.toString().substring(0,10)
-        holder.co.text=item.coordinates
-        //holder.Description=item.description
-        if (!item.pictures.isNullOrEmpty())
+        var parts:List<String> =item.coordinates!!.split(",")
+        holder.lat.text="Latitude:${parts[0]}"
+        holder.lng.text="Longitude:${parts[1]}"
+        holder.Description.text=item.description
+        if (!item.picture.isNullOrEmpty())
         {
-            holder.Picture.load(item.pictures!![0].description)
-
+            holder.Picture.load(item.picture)
         }
         else{
             holder.Picture.load(R.drawable.no_image_24)
