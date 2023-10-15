@@ -1,6 +1,5 @@
 package com.opsc.nestquest.fragments
 
-
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -39,7 +38,6 @@ import retrofit2.Response
 import java.time.LocalDateTime
 
 
-
 class CreateObservation : BottomSheetDialogFragment() {
     // TODO: Rename and change types of parameters
     lateinit var imageView: ShapeableImageView
@@ -47,7 +45,6 @@ class CreateObservation : BottomSheetDialogFragment() {
     var storageRef= Firebase.storage.reference
     lateinit var des: TextInputEditText
     lateinit var deslay: TextInputLayout
-
     lateinit var recycler: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,7 +81,6 @@ class CreateObservation : BottomSheetDialogFragment() {
         fab2.setOnClickListener {
             if(!des.text.isNullOrEmpty())
             {
-
                 val ob:Observation= Observation(null,UserData.user.userId,null,
                     LocalDateTime.now().toString(),"${UserData.lat},${UserData.lng}", description =des.text.toString() , picture = null)
                 if(!link.isNullOrEmpty())
@@ -93,9 +89,8 @@ class CreateObservation : BottomSheetDialogFragment() {
                     //addPicture(picture)
                     ob.picture=link
                 }
-                    addObservation(ob)
-                    genRecycleView(UserData.observations,recycler)
-
+                addObservation(ob)
+                genRecycleView(UserData.observations,recycler)
             }
             else
             {
@@ -103,7 +98,8 @@ class CreateObservation : BottomSheetDialogFragment() {
             }
         }
 
- 
+
+    }
     private fun close ()
     {
         this.dismiss()
@@ -112,7 +108,6 @@ class CreateObservation : BottomSheetDialogFragment() {
     private fun genRecycleView(data:List<Observation>, recyclerView: RecyclerView)
     {
         Log.d("testing","at recycler")
-
         activity?.runOnUiThread(Runnable {
             recyclerView.layoutManager = LinearLayoutManager(context)
             val adapter = observationAdapter(data)
@@ -146,7 +141,6 @@ class CreateObservation : BottomSheetDialogFragment() {
                 val sd = getFileName(requireContext(), imageUri!!)
 
 
-
                 // Upload Task with upload to directory 'file'
                 // and name of the file remains same
                 val uploadTask = storageRef.child("${UserData.user.userId}/$sd").putFile(imageUri)
@@ -154,9 +148,7 @@ class CreateObservation : BottomSheetDialogFragment() {
                 // On success, download the file URL and display it
                 uploadTask.addOnSuccessListener {
                     // using glide library to display the image
-
                     storageRef.child("${UserData.user.userId}/$sd").downloadUrl.addOnSuccessListener {
-
 
                         Glide.with(this@CreateObservation)
                             .load(it)
@@ -187,7 +179,6 @@ class CreateObservation : BottomSheetDialogFragment() {
         }
         return uri.path?.lastIndexOf('/')?.let { uri.path?.substring(it) }
     }
-
 
 
 //    private fun addPicture(pic: Picture)
@@ -225,7 +216,6 @@ class CreateObservation : BottomSheetDialogFragment() {
         Log.d("testing", "String of Object  $ob")
         Log.d("testing", Gson().toJson(ob))
         GlobalScope.launch{
-
             nqAPI.addObserve(ob).enqueue(
                 object : Callback<Observation> {
 
@@ -234,7 +224,6 @@ class CreateObservation : BottomSheetDialogFragment() {
                         Log.d("testing", "it worked")
                         genRecycleView(UserData.observations,recycler)
                         getOb()
-
 
                     }
 
@@ -287,9 +276,5 @@ class CreateObservation : BottomSheetDialogFragment() {
 
         }
     }
-
-
-    
-
 
 }
