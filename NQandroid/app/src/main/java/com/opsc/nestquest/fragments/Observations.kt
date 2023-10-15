@@ -135,22 +135,7 @@ class Observations : Fragment() {
         return false
     }
 
-    private fun genRecycleView(data:List<Observation>, recyclerView: RecyclerView)
-    {
-        activity?.runOnUiThread(Runnable {
-            recyclerView.layoutManager = LinearLayoutManager(context)
-            val adapter = observationAdapter(data)
-            recyclerView.adapter = adapter
-//            adapter.setOnClickListener(object : observationAdapter.OnClickListener {
-//                override fun onClick(position: Int, model: HotspotView) {
-//
-//
-//                }
-//            })
-        })
-    }
-
-
+    
     private fun requestPermissions()
     {
         ActivityCompat.requestPermissions(requireActivity(),
