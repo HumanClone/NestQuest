@@ -103,12 +103,7 @@ class CreateObservation : BottomSheetDialogFragment() {
             }
         }
 
-    private fun close ()
-    {
-        this.dismiss()
-    }
-
-    }
+ 
     private fun close ()
     {
         this.dismiss()
@@ -294,35 +289,7 @@ class CreateObservation : BottomSheetDialogFragment() {
     }
 
 
-    private fun getOb()
-    {
-        val timeWiseApi = NQRetro.getInstance().create(NQAPI::class.java)
-        // launching a new coroutine
-        GlobalScope.launch {
-            try {
-
-
-                val call:List<Observation> = timeWiseApi.getObserve(UserData.user.userId!!)
-                if (call.isEmpty())
-                {
-                    Log.d("testing","no values ")
-                }
-
-                Log.d("testing", call.toString())
-                UserData.observations.clear()
-                UserData.observations=call.toMutableList<Observation>()
-                Log.d("testing", UserData.observations.toString())
-                genRecycleView(UserData.observations,recycler)
-                close()
-
-            }
-            catch (e:kotlin.KotlinNullPointerException)
-            {
-                Log.d("testing","no data")
-            }
-
-        }
-    }
+    
 
 
 }
