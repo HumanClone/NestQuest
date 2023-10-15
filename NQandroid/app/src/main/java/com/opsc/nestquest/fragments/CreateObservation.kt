@@ -26,7 +26,6 @@ import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 import com.opsc.nestquest.Objects.UserData
 import com.opsc.nestquest.R
-
 import com.opsc.nestquest.api.nestquest.NQAPI
 import com.opsc.nestquest.api.nestquest.adapters.observationAdapter
 import com.opsc.nestquest.api.nestquest.models.NQRetro
@@ -37,7 +36,6 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
 import java.time.LocalDateTime
 
 
@@ -46,7 +44,6 @@ class CreateObservation : BottomSheetDialogFragment() {
     // TODO: Rename and change types of parameters
     lateinit var imageView: ShapeableImageView
     var link:String=""
-
     var storageRef= Firebase.storage.reference
     lateinit var des: TextInputEditText
     lateinit var deslay: TextInputLayout
@@ -67,6 +64,7 @@ class CreateObservation : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
+
         imageView=view.findViewById(R.id.ImageField)
         deslay=view.findViewById(R.id.DesLay)
         des=view.findViewById(R.id.DesField)
@@ -104,10 +102,13 @@ class CreateObservation : BottomSheetDialogFragment() {
                 deslay.error="Enter a Description"
             }
         }
-        
-        
+
+    private fun close ()
+    {
+        this.dismiss()
     }
 
+    }
     private fun close ()
     {
         this.dismiss()
@@ -129,9 +130,9 @@ class CreateObservation : BottomSheetDialogFragment() {
 //            })
         })
     }
-    
-    
-    
+
+
+
     //Code attributed
     //https://www.geeksforgeeks.org/android-upload-an-image-on-firebase-storage-with-kotlin/
     //used as a reference to add image file to firebase
@@ -154,7 +155,6 @@ class CreateObservation : BottomSheetDialogFragment() {
                 // Upload Task with upload to directory 'file'
                 // and name of the file remains same
                 val uploadTask = storageRef.child("${UserData.user.userId}/$sd").putFile(imageUri)
-
 
                 // On success, download the file URL and display it
                 uploadTask.addOnSuccessListener {
@@ -241,7 +241,6 @@ class CreateObservation : BottomSheetDialogFragment() {
                         getOb()
 
 
-
                     }
 
                     override fun onResponse(call: Call<Observation>, response: Response<Observation>) {
@@ -256,80 +255,8 @@ class CreateObservation : BottomSheetDialogFragment() {
                 })
         }
     }
-    
 
 
-    @SuppressLint("MissingPermission")
-    private fun getLocation() {
-        if (checkPermissions()) {
-            if (isLocationEnabled()) {
-                mFusedLocationClient.lastLocation.addOnCompleteListener(requireActivity()) { task ->
-                    val location: Location? = task.result
-                    if (location != null) {
-                        val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                        UserData.lat=location.latitude
-                        UserData.lng=location.longitude
-                       
-                    }
-                }
-            } else {
-                Toast.makeText(requireContext(), "Please turn on location", Toast.LENGTH_LONG).show()
-                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                startActivity(intent)
-            }
-        } else {
-            requestPermissions()
-        }
-    }
-
-
-    private fun isLocationEnabled(): Boolean {
-
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-            LocationManager.NETWORK_PROVIDER
-        )
-    }
-
-    private fun checkPermissions(): Boolean
-    {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            return true
-        }
-        return false
-    }
-
-
-    private fun requestPermissions()
-    {
-        ActivityCompat.requestPermissions(requireActivity(),
-            arrayOf(
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ),
-            permissionId
-        )
-    }
-
-    @SuppressLint("MissingSuperCall")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray)
-    {
-        Log.d("testing",requestCode.toString())
-        if (requestCode == permissionId)
-        {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED))
-            {
-                getLocation()
-            }
-        }
-    }
     companion object {
         const val TAG = "CreateObservation"
 
@@ -365,5 +292,37 @@ class CreateObservation : BottomSheetDialogFragment() {
 
         }
     }
+
+
+    private fun getOb()
+    {
+        val timeWiseApi = NQRetro.getInstance().create(NQAPI::class.java)
+        // launching a new coroutine
+        GlobalScope.launch {
+            try {
+
+
+                val call:List<Observation> = timeWiseApi.getObserve(UserData.user.userId!!)
+                if (call.isEmpty())
+                {
+                    Log.d("testing","no values ")
+                }
+
+                Log.d("testing", call.toString())
+                UserData.observations.clear()
+                UserData.observations=call.toMutableList<Observation>()
+                Log.d("testing", UserData.observations.toString())
+                genRecycleView(UserData.observations,recycler)
+                close()
+
+            }
+            catch (e:kotlin.KotlinNullPointerException)
+            {
+                Log.d("testing","no data")
+            }
+
+        }
+    }
+
 
 }

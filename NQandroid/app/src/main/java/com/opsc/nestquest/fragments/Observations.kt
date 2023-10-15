@@ -30,8 +30,9 @@ import com.opsc.nestquest.Objects.UserData
 import com.opsc.nestquest.R
 import com.opsc.nestquest.api.nestquest.adapters.observationAdapter
 import com.opsc.nestquest.api.nestquest.models.Observation
-
 import java.util.Locale
+
+
 
 
 
@@ -133,6 +134,7 @@ class Observations : Fragment() {
         }
         return false
     }
+
     private fun genRecycleView(data:List<Observation>, recyclerView: RecyclerView)
     {
         activity?.runOnUiThread(Runnable {
@@ -147,6 +149,7 @@ class Observations : Fragment() {
 //            })
         })
     }
+
 
     private fun requestPermissions()
     {
