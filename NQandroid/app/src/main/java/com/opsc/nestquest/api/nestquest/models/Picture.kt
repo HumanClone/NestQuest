@@ -1,7 +1,11 @@
 package com.opsc.nestquest.api.nestquest.models
 
+
+import com.google.gson.annotations.SerializedName
+
 data class Picture(
-    var pictureId: String?,
-    var userId: String?,
-    var description: String?
+    @SerializedName("pictureId" ) var pictureId: String?,
+    @SerializedName("userId" ) var userId: String?,
+    @SerializedName("description" )var description: String?
+
 )

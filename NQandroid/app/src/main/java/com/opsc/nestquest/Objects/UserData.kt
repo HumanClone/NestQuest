@@ -11,10 +11,9 @@ object UserData
     var lng:Double=0.0
     var destLat:Double=0.0
     var destLng:Double=0.0
-//    var distance:Double=10.0
-//    var metric:Boolean=true
-    var user: User=User(null,null,null,null,null,null,null)
-    val observations= mutableListOf<Observation>()
+    var user: User=User(null,null,null,null,null,null,true)
+    var observations= mutableListOf<Observation>()
+
 
 
 }

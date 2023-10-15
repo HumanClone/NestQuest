@@ -80,15 +80,13 @@ class MapView : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_map_view, container, false)
-
-
+        Log.d("testing","log")
     }
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
-    {
-        super.onViewCreated(view, savedInstanceState)
+    {   super.onViewCreated(view, savedInstanceState)
+        Log.d("testing","start")
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         mLocationRequest = LocationRequest()
         locationManager=requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -244,6 +242,7 @@ class MapView : Fragment() {
 
     private fun getNearbyHotspots()
     {
+        Log.d("testing","Here at hostspots")
         val ebirdapi=eBirdRetro.getInstance().create((eBirdApi::class.java))
         //TODO: Change the distance parameter according to the settings
         GlobalScope.launch {
@@ -318,11 +317,11 @@ class MapView : Fragment() {
                         UserData.lat=location.latitude
                         UserData.lng=location.longitude
                         Log.d("testing","Latitude:${lolist[0].latitude}\tLongitude:${lolist[0].longitude}")
-                        if(conditionsNeeded)
-                        {
-                            getLoKey()
-                            conditionsNeeded=false;
-                        }
+//                        if(conditionsNeeded)
+//                        {
+//                            getLoKey()
+//                            conditionsNeeded=false;
+//                        }
                         getNearbyHotspots()
                         startLocationUpdates()
                     }
@@ -386,69 +385,69 @@ class MapView : Fragment() {
         }
     }
 
-    private fun getLoKey()
-    {
-        val weatherApiKey = BuildConfig.WEATHER_API_KEY
-        val weatherApi = WeatherRetro.getInstance().create(WeatherApi::class.java)
-        GlobalScope.launch {
-            val call: Call<ALocation?>? = weatherApi.getKey(weatherApiKey,"${lolist[0].latitude},${lolist[0].longitude}")
-            //val call: Call<ALocation?>? = weatherApi.getKey()
-            call!!.enqueue(object : Callback<ALocation?> {
-                override fun onResponse(
-                    call: Call<ALocation?>?,
-                    response: Response<ALocation?>
-                ) {
-                    if (response.isSuccessful())
-                    {
-                        Log.d("testing",response.body()!!.toString())
-                        alocal=response.body()!!
-
-                        getConditions()
-
-                    }
-                }
-
-                override fun onFailure(call: Call<ALocation?>?, t: Throwable?) {
-
-                    Log.d("Testing","fail")
-                }
-            })
-        }
-    }
-
-
-    private fun getConditions() {
-        val weatherApiKey = BuildConfig.WEATHER_API_KEY
-        val weatherApi = WeatherRetro.getInstance().create(WeatherApi::class.java)
-
-        GlobalScope.launch {
-            val call: Call<List<Conditions>?>? = weatherApi.getConditions(alocal.Key.toString(), weatherApiKey)
-
-            call!!.enqueue(object : Callback<List<Conditions>?> {
-                override fun onResponse(call: Call<List<Conditions>?>?, response: Response<List<Conditions>?>)
-                {
-                    if (response.isSuccessful) {
-                        val conditionsList = response.body()
-                        if (conditionsList != null && conditionsList.isNotEmpty()) {
-                            val conditions =
-                                conditionsList[0] // Assuming the response contains multiple conditions
-                            Log.d("testing", conditions.toString())
-
-                        } else {
-                            Log.d("testing", "Empty or null response")
-                        }
-                    } else {
-                        Log.d("testing", "Response not successful: ${response.code()}")
-                    }
-                }
-
-                override fun onFailure(call: Call<List<Conditions>?>?, t: Throwable?) {
-                    Log.d("Testing", "fail\t${t?.message}")
-                }
-            })
-
-        }
-    }
+//    private fun getLoKey()
+//    {
+//        val weatherApiKey = BuildConfig.WEATHER_API_KEY
+//        val weatherApi = WeatherRetro.getInstance().create(WeatherApi::class.java)
+//        GlobalScope.launch {
+//            val call: Call<ALocation?>? = weatherApi.getKey(weatherApiKey,"${lolist[0].latitude},${lolist[0].longitude}")
+//            //val call: Call<ALocation?>? = weatherApi.getKey()
+//            call!!.enqueue(object : Callback<ALocation?> {
+//                override fun onResponse(
+//                    call: Call<ALocation?>?,
+//                    response: Response<ALocation?>
+//                ) {
+//                    if (response.isSuccessful())
+//                    {
+//                        Log.d("testing",response.body()!!.toString())
+//                        alocal=response.body()!!
+//
+//                        getConditions()
+//
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<ALocation?>?, t: Throwable?) {
+//
+//                    Log.d("Testing","fail")
+//                }
+//            })
+//        }
+//    }
+//
+//
+//    private fun getConditions() {
+//        val weatherApiKey = BuildConfig.WEATHER_API_KEY
+//        val weatherApi = WeatherRetro.getInstance().create(WeatherApi::class.java)
+//
+//        GlobalScope.launch {
+//            val call: Call<List<Conditions>?>? = weatherApi.getConditions(alocal.Key.toString(), weatherApiKey)
+//
+//            call!!.enqueue(object : Callback<List<Conditions>?> {
+//                override fun onResponse(call: Call<List<Conditions>?>?, response: Response<List<Conditions>?>)
+//                {
+//                    if (response.isSuccessful) {
+//                        val conditionsList = response.body()
+//                        if (conditionsList != null && conditionsList.isNotEmpty()) {
+//                            val conditions =
+//                                conditionsList[0] // Assuming the response contains multiple conditions
+//                            Log.d("testing", conditions.toString())
+//
+//                        } else {
+//                            Log.d("testing", "Empty or null response")
+//                        }
+//                    } else {
+//                        Log.d("testing", "Response not successful: ${response.code()}")
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<List<Conditions>?>?, t: Throwable?) {
+//                    Log.d("Testing", "fail\t${t?.message}")
+//                }
+//            })
+//
+//        }
+//   }
 
 
 }
