@@ -7,6 +7,6 @@
         public string? BirdId { get; set; }
         public DateTime? DateSeen { get; set; }
         public string? Coordinates { get; set; }
-        public List<Picture>? pictures { get; set; }
+        public Picture? picture { get; set; }
     }
 }

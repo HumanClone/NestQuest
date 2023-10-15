@@ -107,7 +107,7 @@ namespace TimeWise.Controllers
         {
             FirebaseResponse response = client.Get("users");
             dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
-            var list = new List<User>();
+            List<User> list = new List<User>();
             if (data != null)
             {
                 foreach (var item in data)

@@ -92,6 +92,22 @@ namespace TimeWise.Controllers
             }
             return list;
         }
+        [HttpGet("GetAllBirdSightingsForUser")]
+        public List<BirdSighting> GetAllBirdSightingsForUser(string? userId)
+        {
+            FirebaseResponse response = client.Get("birdSightings");
+            dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
+            var list = new List<BirdSighting>();
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    list.Add(JsonConvert.DeserializeObject<BirdSighting>(((JProperty)item).Value.ToString()));
+                }
+            }
+            list = list.Where(x => x.UserId == userId).ToList();
+            return list;
+        }
         [HttpDelete("DeleteBirdSighting")]
         public void Delete(string? BirdSightingId)
         {

@@ -72,7 +72,7 @@ namespace TimeWise.Controllers
         [HttpGet("GetAllBirds")]
         public List<Bird> GetAllBirds()
         {
-            FirebaseResponse response = client.Get("timesheets");
+            FirebaseResponse response = client.Get("birds");
             dynamic data = JsonConvert.DeserializeObject<dynamic>(response.Body);
             var list = new List<Bird>();
             if (data != null)
