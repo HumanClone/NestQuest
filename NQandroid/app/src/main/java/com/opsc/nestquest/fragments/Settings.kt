@@ -14,6 +14,7 @@ import android.widget.Toast
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.slider.Slider
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.opsc.nestquest.Objects.UserData
@@ -41,8 +42,8 @@ private const val ARG_PARAM2 = "param2"
 class Settings : Fragment() {
 
 
-    private lateinit var username:TextView
-    private lateinit var email:TextView
+    private lateinit var usernameEditText: TextInputEditText
+    private lateinit var emailEditText: TextInputEditText
     private lateinit var  system: TextInputLayout
     private lateinit var systemField:MaterialAutoCompleteTextView
     private lateinit var distance:Slider
@@ -62,16 +63,16 @@ class Settings : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
-        username=view.findViewById(R.id.username)
-        email=view.findViewById(R.id.email)
+        usernameEditText=view.findViewById(R.id.usernameEditText)
+        emailEditText=view.findViewById(R.id.emailEditText)
 
 
         unit=view.findViewById(R.id.unit)
         distance=view.findViewById(R.id.distance)
 
 
-        username.text=UserData.user.name
-        email.text=UserData.user.email
+        usernameEditText.setText(UserData.user.name)
+        emailEditText.setText(UserData.user.email)
         distance.value=UserData.user.maxDistance!!
 
 

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
@@ -40,6 +41,7 @@ class Observations : Fragment() {
     private lateinit var recycler:RecyclerView
     private lateinit var locationManager: LocationManager
     private val permissionId = 2
+    lateinit var address:String
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,9 +72,18 @@ class Observations : Fragment() {
             getLocation()
             val co= CreateObservation()
             co.recycler=recycler
-            co.show(parentFragmentManager,CreateObservation.TAG)
+            co.address=address
+            if(co.isAdded)
+            {
+                co.dismiss()
+                co.show(parentFragmentManager,CreateObservation.TAG)
+            }
+            else
+            {
+                co.show(parentFragmentManager,CreateObservation.TAG)
+            }
+
         }
-        //TODO: ADd for no observtaions
     }
     private fun genRecycleView(data:List<Observation>, recyclerView: RecyclerView)
     {
@@ -80,12 +91,23 @@ class Observations : Fragment() {
             recyclerView.layoutManager = LinearLayoutManager(context)
             val adapter = observationAdapter(data)
             recyclerView.adapter = adapter
-//            adapter.setOnClickListener(object : observationAdapter.OnClickListener {
-//                override fun onClick(position: Int, model: HotspotView) {
-//
-//
-//                }
-//            })
+            adapter.setOnClickListener(object : observationAdapter.OnClickListener {
+                override fun onClick(position: Int, model: Observation) {
+
+                    val ob=ObservationView()
+                    ob.ob=model
+                    if (ob.isAdded)
+                    {
+                        ob.dismiss()
+                        ob.show(parentFragmentManager,ObservationView.TAG)
+                    }
+                    else
+                    {
+                        ob.show(parentFragmentManager,ObservationView.TAG)
+                    }
+
+                }
+            })
         })
     }
 
@@ -96,6 +118,11 @@ class Observations : Fragment() {
                 mFusedLocationClient.lastLocation.addOnCompleteListener(requireActivity()) { task ->
                     val location: Location? = task.result
                     if (location != null) {
+                        var addressList: List<Address?>? = null
+                        addressList = Geocoder(requireContext(), Locale.ENGLISH).getFromLocation(location.latitude, location.longitude, 1)
+                        Log.d("testing",addressList.toString())
+                        Log.d("testing",addressList!![0].getAddressLine(0).toString())
+                        address=addressList!![0].getAddressLine(0).toString()
                         UserData.lat=location.latitude
                         UserData.lng=location.longitude
                         Log.d("testing","${UserData.lat},${UserData.lng}")

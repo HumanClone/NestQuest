@@ -18,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -70,6 +71,8 @@ class MapView : Fragment() {
     private val FASTEST_INTERVAL: Long = 20000
     lateinit var mLastLocation: Location
     internal lateinit var mLocationRequest: LocationRequest
+    var locationGot:Boolean=false
+    var request:Boolean=false
 
 
 
@@ -86,7 +89,6 @@ class MapView : Fragment() {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {   super.onViewCreated(view, savedInstanceState)
-        Log.d("testing","start")
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         mLocationRequest = LocationRequest()
         locationManager=requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -113,49 +115,63 @@ class MapView : Fragment() {
 
 
             }
+            else{
+                Toast.makeText(requireContext(), "No hotspots in the maximum distance ", Toast.LENGTH_LONG).show()
+            }
         }
 
+        mapSetup()
 
         if(checkPermissions())
         {
             getLocation()
             currentLocal()
-            val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
-            mapFragment.getMapAsync { googleMap ->
-                googleMap.setOnMarkerClickListener { marker ->
-                    if(spots.size!=0)
-                    {
-                        val selectedSpot = spots.find { item -> item.latLng == marker.position }
-                        if (selectedSpot != null) {
 
-                            val existingFragment = parentFragmentManager.findFragmentByTag(HotspotItem.TAG)
-                            if (existingFragment == null) {
-                                itemModal.id = selectedSpot.locId!!
-                                itemModal.setGoogleMap(googleMap)
-                                itemModal.mFusedLocationClient=mFusedLocationClient
-                                itemModal.mLocationCallback=mLocationCallback
-                                itemModal.show(parentFragmentManager, HotspotItem.TAG)
-                                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 15F))
-                            }
-                            else
-                            {
-                                parentFragmentManager.beginTransaction().remove(itemModal).commit()
-                            }
-
-                        }
-                    }
-                    true // Return true to indicate that the event is consumed.
-                }
-            }
         }
         else
         {
+//            while(!locationGot)
+//            {
+//                getLocation()
+//            }
             getLocation()
-            startLocationUpdates()
-        }
 
+        }
+        startLocationUpdates()
 
     }
+
+    private fun mapSetup()
+    {
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
+        mapFragment.getMapAsync { googleMap ->
+            googleMap.setOnMarkerClickListener { marker ->
+                if(spots.size!=0)
+                {
+                    val selectedSpot = spots.find { item -> item.latLng == marker.position }
+                    if (selectedSpot != null) {
+
+                        val existingFragment = parentFragmentManager.findFragmentByTag(HotspotItem.TAG)
+                        if (existingFragment == null) {
+                            itemModal.id = selectedSpot.locId!!
+                            itemModal.setGoogleMap(googleMap)
+                            itemModal.mFusedLocationClient=mFusedLocationClient
+                            itemModal.mLocationCallback=mLocationCallback
+                            itemModal.show(parentFragmentManager, HotspotItem.TAG)
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 15F))
+                        }
+                        else
+                        {
+                            parentFragmentManager.beginTransaction().remove(itemModal).commit()
+                        }
+
+                    }
+                }
+                true // Return true to indicate that the event is consumed.
+            }
+        }
+    }
+
 
     override fun onDetach() {
         super.onDetach()
@@ -266,7 +282,6 @@ class MapView : Fragment() {
                             )
                         }
                         spots=spots.sortedBy{ it.distance }
-                        //https://stackoverflow.com/questions/18053156/set-image-from-drawable-as-marker-in-google-map-version-2
                         try {
                             val icon = resources.getDrawable(R.drawable.hot_24)
                             val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
@@ -301,14 +316,34 @@ class MapView : Fragment() {
             })
         }
     }
+    val locationPermissionRequest = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        when {
+            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                // Precise location access granted.
+                getLocation()
+            }
+            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+                // Only approximate location access granted.
+                getLocation()
+            } else -> {
+            getLocation()
+        }
+        }
+    }
 
 
-
+    //Code Attributes
     //https://techpassmaster.com/get-current-location-in-android-studio-using-kotlin/
+    //Get Current Location in Android Studio using Kotlin
+    //arthor:Techpass Master
     @SuppressLint("MissingPermission", "SetTextI18n")
     private fun getLocation() {
-        if (checkPermissions()) {
-            if (isLocationEnabled()) {
+        if (checkPermissions())
+        {
+            if (isLocationEnabled())
+            {
                 mFusedLocationClient.lastLocation.addOnCompleteListener(requireActivity()) { task ->
                     val location: Location? = task.result
                     if (location != null) {
@@ -316,6 +351,7 @@ class MapView : Fragment() {
                         lolist=  geocoder.getFromLocation(location.latitude,location.longitude,1) as List<Address>
                         UserData.lat=location.latitude
                         UserData.lng=location.longitude
+                        locationGot=true
                         Log.d("testing","Latitude:${lolist[0].latitude}\tLongitude:${lolist[0].longitude}")
 //                        if(conditionsNeeded)
 //                        {
@@ -326,13 +362,21 @@ class MapView : Fragment() {
                         startLocationUpdates()
                     }
                 }
-            } else {
+            }
+            else {
                 Toast.makeText(requireContext(), "Please turn on location", Toast.LENGTH_LONG).show()
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
             }
-        } else {
-            requestPermissions()
+        }
+        else
+        {
+            Log.d("testing","Request")
+            locationPermissionRequest.launch(arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION))
+
+
         }
     }
 
@@ -361,29 +405,9 @@ class MapView : Fragment() {
     }
 
 
-    private fun requestPermissions()
-    {
-        ActivityCompat.requestPermissions(requireActivity(),
-            arrayOf(
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ),
-            permissionId
-        )
-    }
+//
 
-    @SuppressLint("MissingSuperCall")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray)
-    {
-        Log.d("testing",requestCode.toString())
-        if (requestCode == permissionId)
-        {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED))
-            {
-                getLocation()
-            }
-        }
-    }
+
 
 //    private fun getLoKey()
 //    {

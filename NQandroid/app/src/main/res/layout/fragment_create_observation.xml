@@ -55,7 +55,6 @@
                         android:id="@+id/ImageField"
                         android:layout_gravity="center"
                         android:adjustViewBounds="true"
-                        android:background="@drawable/border_image"
                         app:srcCompat="@drawable/add_pic_24" />
             </LinearLayout>
 

@@ -1,5 +1,6 @@
 package com.opsc.nestquest.api.nestquest.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,9 +24,9 @@ class observationAdapter (var data: List<Observation>) :
         var Date:TextView=view.findViewById(R.id.date)
         var Description:TextView=view.findViewById(R.id.description)
 
-        var lat:TextView=view.findViewById(R.id.lat)
+//        var lat:TextView=view.findViewById(R.id.lat)
         var lng:TextView=view.findViewById(R.id.lng)
-
+        //var Address:TextView=view.findViewById(R.id.address)
         var Picture: ImageView =view.findViewById(R.id.picture)
 
     }
@@ -41,13 +42,15 @@ class observationAdapter (var data: List<Observation>) :
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        var system:Boolean=true
         val item = data[position]
         holder.Date.text=item.dateSeen.toString().substring(0,10)
 
-        var parts:List<String> =item.coordinates!!.split(",")
-        holder.lat.text="Latitude:${parts[0]}"
-        holder.lng.text="Longitude:${parts[1]}"
+        var parts:List<String> =item.coordinates!!.split(";")
+//        holder.lat.text="Latitude:${parts[0]}"
+        holder.lng.text=parts[2]
+
+        //holder.Address.text=parts[2]
+        Log.d("testing","At adpater"+parts[2])
         holder.Description.text=item.description
         if (!item.picture.isNullOrEmpty())
         {
