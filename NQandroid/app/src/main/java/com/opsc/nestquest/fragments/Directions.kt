@@ -207,7 +207,12 @@ class Directions : Fragment() {
         }
     }
 
-//https://kotlincodes.com/kotlin/locationlistener-with-kotlin/howt
+
+    //Code attributed
+    // https://kotlincodes.com/kotlin/locationlistener-with-kotlin/
+    // LocationListener With Kotlin
+    //aurthor:Sayandh
+
     @SuppressLint("MissingPermission")
     protected fun startLocationUpdates() {
 

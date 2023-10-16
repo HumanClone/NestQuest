@@ -10,7 +10,11 @@ import com.opsc.nestquest.api.maps.models.MapData
 
 class DirectionHelper {
 
-    //https://www.spaceotechnologies.com/blog/calculate-distance-two-gps-coordinates-google-maps-api/
+    //Code attributed
+    // https://www.spaceotechnologies.com/blog/calculate-distance-two-gps-coordinates-google-maps-api/
+    // How to Calculate Distance Between Two GPS Coordinates in an App
+    //aurthor:Bhaval Patel
+
      fun distance(name:String,lat:Double,lng:Double):String{
         return convertDistance(distanceM(name,lat,lng))
     }
@@ -28,7 +32,11 @@ class DirectionHelper {
         return dist.toDouble()
     }
 
+    //Code attributed
     //https://www.geeksforgeeks.org/how-to-generate-route-between-two-locations-in-google-map-in-android/
+    // How to Generate Route Between Two Locations in Google Map in Android?
+    //aurthor:aashaypawar
+
     fun decodePolyline(encoded: String): List<LatLng> {
         val poly = ArrayList<LatLng>()
         var index = 0

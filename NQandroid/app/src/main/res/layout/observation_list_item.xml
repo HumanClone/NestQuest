@@ -7,7 +7,7 @@
     android:layout_marginTop="12dp"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
-    android:maxHeight="100dp"
+    android:maxHeight="150dp"
     android:minHeight="30dp"
     android:elevation="8dp"
     android:id="@+id/timesheet_card_item"
@@ -58,37 +58,51 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="20dp">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="20dp">-->
 
-                <TextView
-                    android:id="@+id/lat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:textSize="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:textStyle="bold"
-                    android:paddingEnd="70dp"
-                    android:text="Co-ordinates" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="30dp">
+<!--                <TextView-->
+<!--                    android:id="@+id/lat"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="30dp"-->
+<!--                    android:textSize="16dp"-->
+<!--                    android:layout_marginEnd="16dp"-->
+<!--                    android:layout_marginBottom="16dp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:paddingEnd="70dp"-->
+<!--                    android:text="Co-ordinates" />-->
+<!--            </LinearLayout>-->
+
 
                 <TextView
                     android:id="@+id/lng"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="20dp"
                     android:textSize="16dp"
+                    android:maxHeight="60dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="16dp"
                     android:textStyle="bold"
-                    android:paddingEnd="70dp"
-                    android:text="Co-ordinates" />
-            </LinearLayout>
+                    android:text="Address" />
+
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="20dp">-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/address"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:maxHeight="60dp"-->
+<!--                    android:textSize="16dp"-->
+<!--                    android:layout_marginEnd="16dp"-->
+<!--                    android:layout_marginBottom="16dp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:text="Address" />-->
+<!--            </LinearLayout>-->
 
             <LinearLayout
                 android:layout_width="match_parent"

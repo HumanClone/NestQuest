@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,6 +47,7 @@ class CreateObservation : BottomSheetDialogFragment() {
     lateinit var des: TextInputEditText
     lateinit var deslay: TextInputLayout
     lateinit var recycler: RecyclerView
+    lateinit var address:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +84,7 @@ class CreateObservation : BottomSheetDialogFragment() {
             if(!des.text.isNullOrEmpty())
             {
                 val ob:Observation= Observation(null,UserData.user.userId,null,
-                    LocalDateTime.now().toString(),"${UserData.lat},${UserData.lng}", description =des.text.toString() , picture = null)
+                    LocalDateTime.now().toString(),"${UserData.lat};${UserData.lng};${address}", description =des.text.toString() , picture = null)
                 if(!link.isNullOrEmpty())
                 {
                     //val picture = Picture(null,userId = UserData.user.userId, description = link)
@@ -112,12 +114,7 @@ class CreateObservation : BottomSheetDialogFragment() {
             recyclerView.layoutManager = LinearLayoutManager(context)
             val adapter = observationAdapter(data)
             recyclerView.adapter = adapter
-//            adapter.setOnClickListener(object : observationAdapter.OnClickListener {
-//                override fun onClick(position: Int, model: HotspotView) {
-//
-//
-//                }
-//            })
+
         })
     }
 
@@ -224,6 +221,7 @@ class CreateObservation : BottomSheetDialogFragment() {
                         Log.d("testing", "it worked")
                         genRecycleView(UserData.observations,recycler)
                         getOb()
+                        Toast.makeText(requireContext(), "Observation Saved", Toast.LENGTH_LONG).show()
 
                     }
 
