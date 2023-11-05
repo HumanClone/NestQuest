@@ -24,8 +24,7 @@ android {
         manifestPlaceholders = [
                 WeatherKey: "477tIqNneNef0aYUfJDHOX3v75ta2jtw",
                 eBirdKey:"5dujd863gste",
-                MapsKey:"AIzaSyBm0rqOJ0wyZhS341bzggtjO6HGBtrvDmU"
-                // Add more key-value pairs as needed
+                MapsKey:"AIzaSyC20SouYI5tvPEgqzMUCow_UqIcwkGdEWI"
         ]
         buildConfigField "String", "WEATHER_API_KEY", "\"${manifestPlaceholders['WeatherKey']}\""
         buildConfigField "String", "EBIRD_API_KEY", "\"${manifestPlaceholders['eBirdKey']}\""

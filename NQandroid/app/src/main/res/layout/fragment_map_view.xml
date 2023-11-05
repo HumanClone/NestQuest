@@ -15,6 +15,7 @@
         android:layout_marginTop="20dp"
         android:elevation="10dp"
         android:gravity="center"
+        android:textColor="@color/black"
         android:text="Weather Forecast"
         android:textSize="20dp"
         android:textStyle="bold" />

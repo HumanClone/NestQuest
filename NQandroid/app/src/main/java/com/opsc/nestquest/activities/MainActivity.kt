@@ -2,6 +2,7 @@ package com.opsc.nestquest.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -39,6 +40,8 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.material.navigation.NavigationBarView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 import com.opsc.nestquest.Objects.UserData
 import com.opsc.nestquest.R
 import com.opsc.nestquest.api.ebird.models.HotspotView
@@ -54,20 +57,28 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var locationManager: LocationManager
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
-    private val INTERVAL: Long = (600*1000)
-    private val FASTEST_INTERVAL: Long = (300*1000)
+    private val INTERVAL: Long = (60*1000)//24000
+    private val FASTEST_INTERVAL: Long = (30*1000)//12000
     lateinit var mLastLocation: Location
     internal lateinit var mLocationRequest: LocationRequest
     val CHANNEL_ID = "Location"
     val CHANNEL_NAME = "Near Hotspots"
     val NOTIF_ID = 101
     val helper:DirectionHelper=DirectionHelper()
-
+    var firstTime:Boolean=true
+    var permis:Boolean=false
+    val oneHour = 360//3600000
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        if(currentUser==null)
+        {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         mLocationRequest = LocationRequest()
         locationManager=this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -97,7 +108,7 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
-
+        createNotifChannel()
 
 
 
@@ -122,13 +133,26 @@ class MainActivity : AppCompatActivity() {
 
         val notif = NotificationCompat.Builder(this,CHANNEL_ID)
             .setContentTitle("Near a Hotspot")
-            .setContentText("You are near a hotspot: ${spot.locName}")
-            .setSmallIcon(R.drawable.logo)
+            .setContentText("You are near a hotspot: ${spot.locName}.\n Click here to navigate to the Hotspot")
+            .setSmallIcon(R.drawable.logo_round)
+            .setAutoCancel(true)
+            .setStyle(NotificationCompat.BigTextStyle())
+            .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
         val notifManger = NotificationManagerCompat.from(this)
-        notifManger.notify(NOTIF_ID,notif)
+        val sharedPreferences = getSharedPreferences("NotificationPrefs", Context.MODE_PRIVATE)
+        val lastNotificationTime = sharedPreferences.getLong("lastNotificationTime", 0)
+        val currentTime = System.currentTimeMillis()
+
+        if (currentTime - lastNotificationTime >= oneHour) {
+            Log.d("testing","Notifing User")
+            UserData.destLat=spot.latLng!!.latitude
+            UserData.destLng=spot.latLng!!.longitude
+            notifManger.notify(NOTIF_ID,notif)
+            sharedPreferences.edit().putLong("lastNotificationTime", currentTime).apply()
+        }
     }
 
     private fun createNotifChannel() {
@@ -153,32 +177,19 @@ class MainActivity : AppCompatActivity() {
     val notifPermiss = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { permissions ->
-          if(permissions)
-          {
-              createNotifChannel()
-              getLocation()
-              if(UserData.user.darkTheme!!)
-              {
-                  startLocationUpdates()
-              }
-              loadFrag(MapView())
 
-          }
-        else{
-            Perm()
-          }
+        permis=permissions
+        getLocation()
 
     }
 
-    private fun Perm()
-    {
-        notifPermiss.launch(Manifest.permission.POST_NOTIFICATIONS)
-    }
+
 
 
     @SuppressLint("MissingPermission")
     protected fun startLocationUpdates() {
 
+        Log.d("testing","Start of updates on the activity")
         // Create the location request to start receiving updates
 
         mLocationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -219,7 +230,7 @@ class MainActivity : AppCompatActivity() {
                 UserData.spots[0].latLng!!.longitude!!
             )
 
-            if(dist<500)
+            if(dist<50000)//ideally 500
             {
                 Notif(UserData.spots[0])
             }
@@ -246,8 +257,19 @@ class MainActivity : AppCompatActivity() {
                 // Only approximate location access granted.
                 getLocation()
             } else -> {
-            getLocation()
-        }
+            AlertDialog.Builder(this)
+                .setTitle("Location Permissions Required")
+                .setMessage("Please enable location permissions to use this app.")
+                .setPositiveButton("OK") { dialog, _ ->
+                    // You can optionally add code here to take the user to the settings screen to enable permissions.
+                    val intent = Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    startActivity(intent)
+                    dialog.dismiss()
+
+                }
+                .show()
+
+             }
         }
     }
 
@@ -270,6 +292,15 @@ class MainActivity : AppCompatActivity() {
                         UserData.lng=location.longitude
 
                         startLocationUpdates()
+                        if(firstTime)
+                        {
+                            firstTime=false
+                            if(permis)
+                            {
+                                startLocationUpdates()
+                            }
+                            loadFrag(MapView())
+                        }
                     }
                 }
             }
@@ -285,8 +316,6 @@ class MainActivity : AppCompatActivity() {
             locationPermissionRequest.launch(arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION))
-
-
         }
     }
 

@@ -15,6 +15,7 @@ object UserData
     var user: User=User(null,null,null,null,null,null,true)
     var observations= mutableListOf<Observation>()
     var spots:List<HotspotView> = listOf()
+    var weather="Weather Forecast"
 
 
 

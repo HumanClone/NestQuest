@@ -1,6 +1,12 @@
 package com.opsc.nestquest.fragments
 
+import android.Manifest
+import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,6 +18,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.slider.Slider
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -51,6 +58,10 @@ class Settings : Fragment() {
     private lateinit var distance:Slider
     private lateinit var unit:TextView
     private lateinit var notif:SwitchMaterial
+    val CHANNEL_ID = "Location"
+    val CHANNEL_NAME = "Near Hotspots"
+    val NOTIF_ID = 101
+    var requiredPermission = android.Manifest.permission.POST_NOTIFICATIONS
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -79,6 +90,18 @@ class Settings : Fragment() {
         emailEditText.setText(UserData.user.email)
         distance.value=UserData.user.maxDistance!!
         notif.isChecked=UserData.user.darkTheme!!
+        var checkVal = requireContext().checkCallingOrSelfPermission(requiredPermission)
+        if(checkVal!= PackageManager.PERMISSION_GRANTED)
+        {
+            notif.isChecked=false
+        }
+
+        notif.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked)
+            {
+                notifPermiss.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
 
 
         system=view.findViewById(R.id.system)
@@ -161,5 +184,47 @@ class Settings : Fragment() {
 
                 })
         }
+    }
+
+
+    val notifPermiss = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { permissions ->
+        if(permissions)
+        {
+            createNotifChannel()
+            notif.isChecked=true
+
+
+        }
+        else{
+            notif.isChecked=false
+            AlertDialog.Builder(requireContext())
+                .setTitle("Notification Permissions Required")
+                .setMessage("Please enable notification permissions before you enable this notification")
+                .setPositiveButton("OK") { dialog, _ ->
+                    // You can optionally add code here to take the user to the settings screen to enable permissions.
+                    val intent = Intent(android.provider.Settings.ACTION_ALL_APPS_NOTIFICATION_SETTINGS)
+                    startActivity(intent)
+                    dialog.dismiss()
+
+                }
+                .show()
+
+
+        }
+
+    }
+
+
+    private fun createNotifChannel() {
+
+        val descriptionText = "Notifications that appear when you are near a Hotspot"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance)
+        channel.description = descriptionText
+        // Register the channel with the system
+        val notificationManager: NotificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 }

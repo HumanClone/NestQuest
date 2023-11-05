@@ -142,12 +142,19 @@ class Directions : Fragment() {
                         val mapdata = response.body()
                         if (mapdata != null) {
                             // Assuming the response contains multiple conditions
-
+                            Log.d("testing", response.raw().toString())
                             Log.d("testing", mapdata.toString())
-                            map=mapdata
-                            data=map
-                            directions(map)
+                            if(mapdata.routes.isEmpty())
+                            {
+                                getMapData()
 
+                            }
+                            else
+                            {
+                                map=mapdata
+                                data=map
+                                directions(map)
+                            }
 
                         } else {
                             Log.d("testing", "Empty or null response")

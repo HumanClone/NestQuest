@@ -50,7 +50,6 @@ class observationAdapter (var data: List<Observation>) :
         holder.lng.text=parts[2]
 
         //holder.Address.text=parts[2]
-        Log.d("testing","At adpater"+parts[2])
         holder.Description.text=item.description
         if (!item.picture.isNullOrEmpty())
         {

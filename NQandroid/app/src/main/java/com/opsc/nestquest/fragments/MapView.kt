@@ -2,6 +2,7 @@ package com.opsc.nestquest.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -82,6 +83,7 @@ class MapView : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_map_view, container, false)
+        conditionsNeeded=true
     }
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
@@ -92,6 +94,7 @@ class MapView : Fragment() {
         hotModal.mFusedLocationClient=mFusedLocationClient
         hotModal.mLocationCallback=mLocationCallback
         weather=view.findViewById(R.id.weatherTxt)
+        weather.text=UserData.weather
         val fab = view.findViewById<FloatingActionButton>(R.id.extended_fab_loc)
         fab.setOnClickListener {
             currentLocal()
@@ -119,8 +122,16 @@ class MapView : Fragment() {
         }
 
         mapSetup()
-        getLocation()
-        currentLocal()
+        if(checkPermissions()) {
+
+
+            getLocation()
+            currentLocal()
+        }
+        else
+        {
+            getLocation()
+        }
 
 
 
@@ -257,7 +268,6 @@ class MapView : Fragment() {
                 {
                     if (response.isSuccessful())
                     {
-                        Log.d("testing",response.body()!!.toString())
                         val hotspots=response.body()!!
                         spots = hotspots.map { item ->
                             HotspotView(
@@ -305,6 +315,35 @@ class MapView : Fragment() {
         }
     }
 
+    val locationPermissionRequest = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        when {
+            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                // Precise location access granted.
+                getLocation()
+            }
+            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+                // Only approximate location access granted.
+                getLocation()
+            }
+            else -> {
+
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Location Permissions Required")
+                    .setMessage("Please enable location permissions to use this app.")
+                    .setPositiveButton("OK") { dialog, _ ->
+                        // You can optionally add code here to take the user to the settings screen to enable permissions.
+                        val intent = Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                        startActivity(intent)
+                        dialog.dismiss()
+
+                    }
+                    .show()
+            }
+        }
+    }
+
 
     //Code Attributes
     //https://techpassmaster.com/get-current-location-in-android-studio-using-kotlin/
@@ -325,13 +364,13 @@ class MapView : Fragment() {
                         UserData.lng=location.longitude
                         locationGot=true
                         Log.d("testing","Latitude:${lolist[0].latitude}\tLongitude:${lolist[0].longitude}")
-                        if(conditionsNeeded)
+                        if(UserData.weather.equals("Weather Forecast"))
                         {
+                            Log.d("testing","Getting coditions")
                             getLoKey()
                             conditionsNeeded=false;
                         }
                         getNearbyHotspots()
-                        startLocationUpdates()
                     }
                 }
             }
@@ -340,6 +379,14 @@ class MapView : Fragment() {
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
             }
+        }
+        else
+        {
+
+        locationPermissionRequest.launch(arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION))
+
         }
 
     }
@@ -375,6 +422,7 @@ class MapView : Fragment() {
     //Weather Conditions
     private fun getLoKey()
     {
+
         val weatherApiKey = BuildConfig.WEATHER_API_KEY
         val weatherApi = WeatherRetro.getInstance().create(WeatherApi::class.java)
         GlobalScope.launch {
@@ -385,6 +433,7 @@ class MapView : Fragment() {
                     call: Call<ALocation?>?,
                     response: Response<ALocation?>
                 ) {
+                    Log.d("testing",response.raw().toString())
                     if (response.isSuccessful())
                     {
                         Log.d("testing",response.body()!!.toString())
@@ -416,9 +465,12 @@ class MapView : Fragment() {
                 {
                     if (response.isSuccessful) {
                         val conditionsList = response.body()
+                        Log.d("testing", response.raw().toString())
+
                         if (conditionsList != null && conditionsList.isNotEmpty()) {
                             conditions = conditionsList[0]
                             Log.d("testing", conditions.toString())
+                            UserData.weather=conditions.WeatherText!!
                             weather.text=conditions.WeatherText
 
                         } else {
