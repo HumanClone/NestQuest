@@ -7,6 +7,7 @@
     tools:context=".fragments.Settings">
 
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,22 +58,6 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <!--        <TextView-->
-        <!--            android:layout_marginTop="10dp"-->
-        <!--            android:id="@+id/username"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:text="Username"-->
-        <!--            android:textSize="30dp" />-->
-
-        <!--        <TextView-->
-        <!--            android:layout_marginTop="10dp"-->
-        <!--            android:id="@+id/email"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:text="Email"-->
-        <!--            android:textSize="20dp" />-->
 
         <TextView
             android:layout_width="match_parent"
@@ -146,6 +131,7 @@
                 android:textSize="25dp"
                 android:textStyle="bold" />
 
+
         </LinearLayout>
 
         <com.google.android.material.slider.Slider
@@ -158,6 +144,16 @@
             android:valueFrom="1.0"
             android:valueTo="100.0"
             app:labelBehavior="visible" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/Notif_Switch"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            app:switchPadding="100dp"
+            android:text="Notifications"
+            android:textSize="25dp"/>
+
+
 
 
     </LinearLayout>
@@ -185,13 +181,16 @@
         app:tint="@color/white"
         android:backgroundTint="?android:attr/colorSecondary"
         android:layout_gravity="bottom|center"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="80dp"
         android:layout_marginEnd="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:icon="@drawable/check_24"
         app:iconTint="@color/white"
         android:contentDescription="TODO" />
+
+
+
 
 
 </FrameLayout>

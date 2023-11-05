@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -58,6 +59,7 @@ class MapView : Fragment() {
 
     private var _binding: FragmentMapViewBinding? = null
     private lateinit var locationManager: LocationManager
+    private lateinit var weather:TextView
     private val permissionId = 2
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
     private var lolist: List<Address> = emptyList()
@@ -73,18 +75,13 @@ class MapView : Fragment() {
     internal lateinit var mLocationRequest: LocationRequest
     var locationGot:Boolean=false
     var request:Boolean=false
-
-
-
-    //TODO: Change Later
-    var conditionsNeeded:Boolean= false
+    var conditionsNeeded:Boolean= true
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_map_view, container, false)
-        Log.d("testing","log")
     }
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
@@ -94,6 +91,7 @@ class MapView : Fragment() {
         locationManager=requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         hotModal.mFusedLocationClient=mFusedLocationClient
         hotModal.mLocationCallback=mLocationCallback
+        weather=view.findViewById(R.id.weatherTxt)
         val fab = view.findViewById<FloatingActionButton>(R.id.extended_fab_loc)
         fab.setOnClickListener {
             currentLocal()
@@ -121,22 +119,11 @@ class MapView : Fragment() {
         }
 
         mapSetup()
+        getLocation()
+        currentLocal()
 
-        if(checkPermissions())
-        {
-            getLocation()
-            currentLocal()
 
-        }
-        else
-        {
-//            while(!locationGot)
-//            {
-//                getLocation()
-//            }
-            getLocation()
 
-        }
         startLocationUpdates()
 
     }
@@ -282,6 +269,7 @@ class MapView : Fragment() {
                             )
                         }
                         spots=spots.sortedBy{ it.distance }
+                        UserData.spots=spots
                         try {
                             val icon = resources.getDrawable(R.drawable.hot_24)
                             val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
@@ -316,22 +304,6 @@ class MapView : Fragment() {
             })
         }
     }
-    val locationPermissionRequest = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        when {
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                // Precise location access granted.
-                getLocation()
-            }
-            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-                // Only approximate location access granted.
-                getLocation()
-            } else -> {
-            getLocation()
-        }
-        }
-    }
 
 
     //Code Attributes
@@ -353,11 +325,11 @@ class MapView : Fragment() {
                         UserData.lng=location.longitude
                         locationGot=true
                         Log.d("testing","Latitude:${lolist[0].latitude}\tLongitude:${lolist[0].longitude}")
-//                        if(conditionsNeeded)
-//                        {
-//                            getLoKey()
-//                            conditionsNeeded=false;
-//                        }
+                        if(conditionsNeeded)
+                        {
+                            getLoKey()
+                            conditionsNeeded=false;
+                        }
                         getNearbyHotspots()
                         startLocationUpdates()
                     }
@@ -369,15 +341,7 @@ class MapView : Fragment() {
                 startActivity(intent)
             }
         }
-        else
-        {
-            Log.d("testing","Request")
-            locationPermissionRequest.launch(arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION))
 
-
-        }
     }
 
 
@@ -405,73 +369,73 @@ class MapView : Fragment() {
     }
 
 
-//
 
 
 
-//    private fun getLoKey()
-//    {
-//        val weatherApiKey = BuildConfig.WEATHER_API_KEY
-//        val weatherApi = WeatherRetro.getInstance().create(WeatherApi::class.java)
-//        GlobalScope.launch {
-//            val call: Call<ALocation?>? = weatherApi.getKey(weatherApiKey,"${lolist[0].latitude},${lolist[0].longitude}")
-//            //val call: Call<ALocation?>? = weatherApi.getKey()
-//            call!!.enqueue(object : Callback<ALocation?> {
-//                override fun onResponse(
-//                    call: Call<ALocation?>?,
-//                    response: Response<ALocation?>
-//                ) {
-//                    if (response.isSuccessful())
-//                    {
-//                        Log.d("testing",response.body()!!.toString())
-//                        alocal=response.body()!!
-//
-//                        getConditions()
-//
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<ALocation?>?, t: Throwable?) {
-//
-//                    Log.d("Testing","fail")
-//                }
-//            })
-//        }
-//    }
-//
-//
-//    private fun getConditions() {
-//        val weatherApiKey = BuildConfig.WEATHER_API_KEY
-//        val weatherApi = WeatherRetro.getInstance().create(WeatherApi::class.java)
-//
-//        GlobalScope.launch {
-//            val call: Call<List<Conditions>?>? = weatherApi.getConditions(alocal.Key.toString(), weatherApiKey)
-//
-//            call!!.enqueue(object : Callback<List<Conditions>?> {
-//                override fun onResponse(call: Call<List<Conditions>?>?, response: Response<List<Conditions>?>)
-//                {
-//                    if (response.isSuccessful) {
-//                        val conditionsList = response.body()
-//                        if (conditionsList != null && conditionsList.isNotEmpty()) {
-//                            val conditions =
-//                                conditionsList[0] // Assuming the response contains multiple conditions
-//                            Log.d("testing", conditions.toString())
-//
-//                        } else {
-//                            Log.d("testing", "Empty or null response")
-//                        }
-//                    } else {
-//                        Log.d("testing", "Response not successful: ${response.code()}")
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<List<Conditions>?>?, t: Throwable?) {
-//                    Log.d("Testing", "fail\t${t?.message}")
-//                }
-//            })
-//
-//        }
-//   }
+    //Weather Conditions
+    private fun getLoKey()
+    {
+        val weatherApiKey = BuildConfig.WEATHER_API_KEY
+        val weatherApi = WeatherRetro.getInstance().create(WeatherApi::class.java)
+        GlobalScope.launch {
+            val call: Call<ALocation?>? = weatherApi.getKey(weatherApiKey,"${lolist[0].latitude},${lolist[0].longitude}")
+            //val call: Call<ALocation?>? = weatherApi.getKey()
+            call!!.enqueue(object : Callback<ALocation?> {
+                override fun onResponse(
+                    call: Call<ALocation?>?,
+                    response: Response<ALocation?>
+                ) {
+                    if (response.isSuccessful())
+                    {
+                        Log.d("testing",response.body()!!.toString())
+                        alocal=response.body()!!
+
+                        getConditions()
+
+                    }
+                }
+
+                override fun onFailure(call: Call<ALocation?>?, t: Throwable?) {
+
+                    Log.d("Testing","fail")
+                }
+            })
+        }
+    }
+
+
+    private fun getConditions() {
+        val weatherApiKey = BuildConfig.WEATHER_API_KEY
+        val weatherApi = WeatherRetro.getInstance().create(WeatherApi::class.java)
+
+        GlobalScope.launch {
+            val call: Call<List<Conditions>?>? = weatherApi.getConditions(alocal.Key.toString(), weatherApiKey)
+
+            call!!.enqueue(object : Callback<List<Conditions>?> {
+                override fun onResponse(call: Call<List<Conditions>?>?, response: Response<List<Conditions>?>)
+                {
+                    if (response.isSuccessful) {
+                        val conditionsList = response.body()
+                        if (conditionsList != null && conditionsList.isNotEmpty()) {
+                            conditions = conditionsList[0]
+                            Log.d("testing", conditions.toString())
+                            weather.text=conditions.WeatherText
+
+                        } else {
+                            Log.d("testing", "Empty or null response")
+                        }
+                    } else {
+                        Log.d("testing", "Response not successful: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<List<Conditions>?>?, t: Throwable?) {
+                    Log.d("Testing", "fail\t${t?.message}")
+                }
+            })
+
+        }
+   }
 
 
 }

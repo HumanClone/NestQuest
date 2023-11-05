@@ -9,10 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.slider.Slider
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -48,6 +50,7 @@ class Settings : Fragment() {
     private lateinit var systemField:MaterialAutoCompleteTextView
     private lateinit var distance:Slider
     private lateinit var unit:TextView
+    private lateinit var notif:SwitchMaterial
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -65,6 +68,7 @@ class Settings : Fragment() {
     {
         usernameEditText=view.findViewById(R.id.usernameEditText)
         emailEditText=view.findViewById(R.id.emailEditText)
+        notif=view.findViewById(R.id.Notif_Switch)
 
 
         unit=view.findViewById(R.id.unit)
@@ -74,6 +78,7 @@ class Settings : Fragment() {
         usernameEditText.setText(UserData.user.name)
         emailEditText.setText(UserData.user.email)
         distance.value=UserData.user.maxDistance!!
+        notif.isChecked=UserData.user.darkTheme!!
 
 
         system=view.findViewById(R.id.system)
@@ -113,7 +118,7 @@ class Settings : Fragment() {
     private fun save()
     {
         UserData.user.maxDistance=distance.value
-
+        UserData.user.darkTheme=notif.isChecked
         UserData.user.metricSystem = systemField.text.toString() == "Metric"
         Log.d("testing","${UserData.user.maxDistance}\t${UserData.user.metricSystem}")
         saveUser(UserData.user.userId!!,UserData.user)

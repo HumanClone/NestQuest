@@ -1,5 +1,6 @@
 package com.opsc.nestquest.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,8 +9,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import coil.load
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
+import com.opsc.nestquest.Objects.UserData
 import com.opsc.nestquest.R
+import com.opsc.nestquest.activities.NavigationActivity
 import com.opsc.nestquest.api.nestquest.models.Observation
 
 
@@ -45,7 +49,12 @@ class ObservationView : BottomSheetDialogFragment() {
         description.setText(ob.description)
         date.setText(ob.dateSeen.toString().substring(0,10))
         picture.load(ob.picture)
-
+        val fab= view.findViewById<ExtendedFloatingActionButton>(R.id.extended_fab_Nav)
+        fab.setOnClickListener {
+            UserData.destLat=co[0].toDouble()
+            UserData.destLng=co[1].toDouble()
+            toActivity()
+        }
 
     }
 
@@ -53,6 +62,12 @@ class ObservationView : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "Observation View"
 
+    }
+
+    private fun toActivity()
+    {
+        val intent = Intent(requireContext(), NavigationActivity::class.java)
+        startActivity(intent)
     }
 
 }
