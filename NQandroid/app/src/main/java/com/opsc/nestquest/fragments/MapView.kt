@@ -102,10 +102,6 @@ class MapView : Fragment() {
         wIcon.setImageResource(helper.getIcon(UserData.icon))
         weather.setText(UserData.weather)
 
-        if(UserData.spots.isNotEmpty())
-        {
-            spots=UserData.spots
-        }
 
         val fab = view.findViewById<FloatingActionButton>(R.id.extended_fab_loc)
         fab.setOnClickListener {
@@ -113,8 +109,14 @@ class MapView : Fragment() {
         }
         val fab2=view.findViewById<FloatingActionButton>(R.id.extended_fab_hot)
         fab2.setOnClickListener {
+            if(UserData.spots.size>0 && spots.size==0)
+            {
+                spots=UserData.spots
+                hotModal.spots=UserData.spots
+            }
             if(spots.size!=0)
             {
+
                 val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
                 mapFragment.getMapAsync { googleMap->
                     hotModal.setGoogleMap(googleMap)
@@ -443,6 +445,12 @@ class MapView : Fragment() {
                     call: Call<ALocation?>?,
                     response: Response<ALocation?>
                 ) {
+                    if(response.message()=="Unauthorized")
+                    {
+                        weather.setText("Api Unavailable")
+                        UserData.weather="Api Unavailable"
+                        return
+                    }
                     Log.d("testing",response.raw().toString())
                     if (response.isSuccessful())
                     {
@@ -471,17 +479,23 @@ class MapView : Fragment() {
             val call: Call<List<Conditions>?>? = weatherApi.getConditions(alocal.Key.toString(), weatherApiKey)
 
             call!!.enqueue(object : Callback<List<Conditions>?> {
-                override fun onResponse(call: Call<List<Conditions>?>?, response: Response<List<Conditions>?>)
+                override fun onResponse(call: Call<List<Conditions>?>, response: Response<List<Conditions>?>)
                 {
                     if (response.isSuccessful) {
                         val conditionsList = response.body()
                         Log.d("testing", response.raw().toString())
+                        if(response.message()=="Unauthorized")
+                        {
+                            weather.setText("Api Unavailable")
+                            UserData.weather="Api Unavailable"
+                            return
+                        }
 
                         if (conditionsList != null && conditionsList.isNotEmpty()) {
                             conditions = conditionsList[0]
                             Log.d("testing", conditions.toString())
                             UserData.weather=conditions.WeatherText!!
-                            UserData.icon= if(conditions.WeatherIcon!! == null) 0 else conditions.WeatherIcon!!
+                            UserData.icon= if(conditions.WeatherIcon == null) 0 else conditions.WeatherIcon!!
                             weather.setText(conditions.WeatherText)
                             wIcon.setImageResource(helper.getIcon(UserData.icon))
 
@@ -493,7 +507,7 @@ class MapView : Fragment() {
                     }
                 }
 
-                override fun onFailure(call: Call<List<Conditions>?>?, t: Throwable?) {
+                override fun onFailure(call: Call<List<Conditions>?>, t: Throwable?) {
                     Log.d("Testing", "fail\t${t?.message}")
                 }
             })

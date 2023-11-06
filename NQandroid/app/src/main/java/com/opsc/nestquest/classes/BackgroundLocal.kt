@@ -1,9 +1,6 @@
 package com.opsc.nestquest.classes
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -13,15 +10,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
-import android.location.Geocoder
 import android.location.Location
-import android.location.LocationManager
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -32,11 +24,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.opsc.nestquest.Objects.UserData
 import com.opsc.nestquest.R
+import com.opsc.nestquest.activities.MainActivity
 import com.opsc.nestquest.activities.NavigationActivity
 import com.opsc.nestquest.api.ebird.models.HotspotView
-import com.opsc.nestquest.databinding.ActivityMainBinding
-import com.opsc.nestquest.fragments.MapView
-import java.util.Locale
 
 //COde attribution
 //author: Suresh Jairwaal
@@ -49,9 +39,7 @@ import java.util.Locale
 //https://www.youtube.com/watch?v=2x5FABUViMc
 class BackgroundLocal: Service() {
 
-    private lateinit var binding: ActivityMainBinding
     var requiredPermission = android.Manifest.permission.POST_NOTIFICATIONS
-    private lateinit var locationManager: LocationManager
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
 //    private val INTERVAL: Long = (60*1000)
 //    private val FASTEST_INTERVAL: Long = (30*1000)
@@ -78,12 +66,18 @@ class BackgroundLocal: Service() {
         super.onCreate()
         val channel = NotificationChannel("Tracking Location", "Tracking", NotificationManager.IMPORTANCE_DEFAULT)
 
+        val intent= Intent(this, MainActivity::class.java)
+        val pendingIntent = TaskStackBuilder.create(this).run {
+            addNextIntentWithParentStack(intent)
+            getPendingIntent(0, PendingIntent.FLAG_MUTABLE)
+        }
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
         val notification = NotificationCompat.Builder(this, "Tracking Location")
             .setContentTitle("Tracking Location")
             .setContentText("Disable the Notification Category to Stop Seeing this  Specific notification")
             .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
             .setSmallIcon(R.drawable.logo_round)
         startForeground(10, notification.build(), FOREGROUND_SERVICE_TYPE_LOCATION)
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)

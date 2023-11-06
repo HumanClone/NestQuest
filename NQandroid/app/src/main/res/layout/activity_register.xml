@@ -48,7 +48,6 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:textSize="20dp"
-          android:cursorVisible="false"
           android:inputType="textEmailAddress"
           tools:ignore="SpeakableTextPresentCheck" />
 
@@ -66,7 +65,6 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:textSize="20dp"
-          android:cursorVisible="false"
           android:inputType="textEmailAddress"
           tools:ignore="SpeakableTextPresentCheck" />
 
@@ -84,39 +82,11 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:textSize="20dp"
-          android:cursorVisible="false"
           android:inputType="textEmailAddress"
           tools:ignore="SpeakableTextPresentCheck" />
 
     </com.google.android.material.textfield.TextInputLayout>
-<!--    <EditText-->
-<!--        android:id="@+id/editText_username"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_below="@id/layout_title"-->
-<!--        android:layout_marginTop="32dp"-->
-<!--        android:hint="Username"-->
-<!--        android:inputType="text"-->
-<!--        android:textColor="#FFFFFF" />-->
 
-<!--    <EditText-->
-<!--        android:id="@+id/editText_email"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:hint="Email"-->
-<!--        android:inputType="textEmailAddress"-->
-<!--        android:textColor="#FFFFFF" />-->
-
-<!--    <EditText-->
-<!--        android:id="@+id/editText_password"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_below="@id/editText_username"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:hint="Password"-->
-<!--        android:inputType="textPassword"-->
-<!--        android:textColor="#FFFFFF" />-->
 
     <TextView
         android:id="@+id/textView_login"
@@ -130,7 +100,6 @@
         android:textColor="#FFFFFF"
         android:textSize="16sp" />
 
-    <!-- White text -->
 
     <Button
         android:id="@+id/button_register"

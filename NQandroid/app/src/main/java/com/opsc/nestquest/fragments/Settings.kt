@@ -2,9 +2,6 @@ package com.opsc.nestquest.fragments
 
 import android.Manifest
 import android.app.AlertDialog
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -14,13 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ServiceCompat.STOP_FOREGROUND_DETACH
-import androidx.core.app.ServiceCompat.stopForeground
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.slider.Slider
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -80,6 +73,14 @@ class Settings : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
+
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        if(currentUser==null)
+        {
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            startActivity(intent)
+        }
         usernameEditText=view.findViewById(R.id.usernameEditText)
         emailEditText=view.findViewById(R.id.emailEditText)
         notif=view.findViewById(R.id.Notif_Switch)
@@ -106,6 +107,7 @@ class Settings : Fragment() {
             }
             else{
                 val serviceIntent = Intent(requireContext(), BackgroundLocal::class.java)
+                requireActivity().stopService(serviceIntent)
 
             }
         }
@@ -199,10 +201,10 @@ class Settings : Fragment() {
     ) { permissions ->
         if(permissions)
         {
-            createNotifChannel()
+
             notif.isChecked=true
-
-
+            val serviceIntent = Intent(requireContext(), BackgroundLocal::class.java)
+            requireActivity().startForegroundService(serviceIntent)
         }
         else{
             notif.isChecked=false
@@ -223,15 +225,4 @@ class Settings : Fragment() {
 
     }
 
-
-    private fun createNotifChannel() {
-
-        val descriptionText = "Notifications that appear when you are near a Hotspot"
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance)
-        channel.description = descriptionText
-        // Register the channel with the system
-        val notificationManager: NotificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-    }
 }

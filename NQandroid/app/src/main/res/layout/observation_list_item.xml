@@ -12,7 +12,7 @@
     android:elevation="8dp"
     android:id="@+id/timesheet_card_item"
     app:cardCornerRadius="15dp"
-    android:backgroundTint="?attr/colorSecondary"
+    android:backgroundTint="#556B2F"
     style="?attr/materialCardViewElevatedStyle"
     android:foreground="?selectableItemBackground"
     android:clickable="true">
