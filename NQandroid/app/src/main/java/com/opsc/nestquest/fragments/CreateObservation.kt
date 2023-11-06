@@ -114,6 +114,23 @@ class CreateObservation : BottomSheetDialogFragment() {
             recyclerView.layoutManager = LinearLayoutManager(context)
             val adapter = observationAdapter(data)
             recyclerView.adapter = adapter
+            adapter.setOnClickListener(object : observationAdapter.OnClickListener {
+                override fun onClick(position: Int, model: Observation) {
+
+                    val ob=ObservationView()
+                    ob.ob=model
+                    if (ob.isAdded)
+                    {
+                        ob.dismiss()
+                        ob.show(parentFragmentManager,ObservationView.TAG)
+                    }
+                    else
+                    {
+                        ob.show(parentFragmentManager,ObservationView.TAG)
+                    }
+
+                }
+            })
 
         })
     }

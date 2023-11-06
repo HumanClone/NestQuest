@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
 import com.opsc.nestquest.R
 import com.opsc.nestquest.api.maps.models.Steps
 import org.jsoup.Jsoup
@@ -16,8 +17,8 @@ RecyclerView.Adapter<StepsAdapter.MyViewHolder>() {
 
     //binds and sets elements and values in a viewholder  to that of each object
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var Dir: TextView =view.findViewById(R.id.modal_dir)
-        var Dist: TextView =view.findViewById(R.id.modal_dist)
+        var Dir: TextInputEditText=view.findViewById(R.id.modal_dir)
+        var Dist: TextInputEditText =view.findViewById(R.id.modal_dist)
 
     }
 
@@ -34,8 +35,8 @@ RecyclerView.Adapter<StepsAdapter.MyViewHolder>() {
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         var system:Boolean=true
         val item = data[position]
-        holder.Dir.text=toPlainText(item.htmlInstructions!!)
-        holder.Dist.text=item.distance!!.text
+        holder.Dir.setText(toPlainText(item.htmlInstructions!!))
+        holder.Dist.setText(item.distance!!.text)
         holder.itemView.setOnClickListener {
             if (onClickListener != null) {
                 onClickListener!!.onClick(position, item )

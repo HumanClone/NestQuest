@@ -38,7 +38,15 @@ import com.opsc.nestquest.databinding.ActivityMainBinding
 import com.opsc.nestquest.fragments.MapView
 import java.util.Locale
 
+//COde attribution
+//author: Suresh Jairwaal
+//Background location service in Android 13 with most updated libraries
+//https://medium.com/@sureshjairwaal_27563/background-location-service-in-android-13-with-most-updated-libraries-a440ac8b9435
 
+//Code Attribution
+//author:TechYourChance
+//Foreground Service Android 14
+//https://www.youtube.com/watch?v=2x5FABUViMc
 class BackgroundLocal: Service() {
 
     private lateinit var binding: ActivityMainBinding

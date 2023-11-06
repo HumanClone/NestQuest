@@ -17,6 +17,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
@@ -35,9 +36,9 @@ import retrofit2.Response
 
 class RegisterActivity : AppCompatActivity() {
 
-    private lateinit var usernameEditText:EditText
-    private lateinit var emailEditText:EditText
-    private lateinit var passwordEditText:EditText
+    private lateinit var usernameEditText:TextInputEditText
+    private lateinit var emailEditText:TextInputEditText
+    private lateinit var passwordEditText:TextInputEditText
     private lateinit var registerButton:Button
     private lateinit var loginTextView:TextView
 

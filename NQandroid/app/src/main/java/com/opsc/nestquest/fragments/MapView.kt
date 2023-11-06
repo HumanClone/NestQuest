@@ -35,6 +35,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.imageview.ShapeableImageView
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.opsc.nestquest.BuildConfig
 import com.opsc.nestquest.Objects.UserData
 import com.opsc.nestquest.R
@@ -60,7 +63,8 @@ class MapView : Fragment() {
 
     private var _binding: FragmentMapViewBinding? = null
     private lateinit var locationManager: LocationManager
-    private lateinit var weather:TextView
+    private lateinit var weather:TextInputEditText
+    private lateinit var wIcon:ShapeableImageView
     private val permissionId = 2
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
     private var lolist: List<Address> = emptyList()
@@ -94,11 +98,18 @@ class MapView : Fragment() {
         hotModal.mFusedLocationClient=mFusedLocationClient
         hotModal.mLocationCallback=mLocationCallback
         weather=view.findViewById(R.id.weatherTxt)
-        weather.text=UserData.weather
+        wIcon=view.findViewById(R.id.Wpicture)
+        wIcon.setImageResource(helper.getIcon(UserData.icon))
+        weather.setText(UserData.weather)
+
+        if(UserData.spots.isNotEmpty())
+        {
+            spots=UserData.spots
+        }
+
         val fab = view.findViewById<FloatingActionButton>(R.id.extended_fab_loc)
         fab.setOnClickListener {
             currentLocal()
-
         }
         val fab2=view.findViewById<FloatingActionButton>(R.id.extended_fab_hot)
         fab2.setOnClickListener {
@@ -117,7 +128,7 @@ class MapView : Fragment() {
 
             }
             else{
-                Toast.makeText(requireContext(), "No hotspots in the maximum distance ", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Ether No hotspots in the maximum distance or Still Loading ", Toast.LENGTH_LONG).show()
             }
         }
 
@@ -363,12 +374,12 @@ class MapView : Fragment() {
                         UserData.lng=location.longitude
                         locationGot=true
                         Log.d("testing","Latitude:${lolist[0].latitude}\tLongitude:${lolist[0].longitude}")
-//                        if(UserData.weather.equals("Weather Forecast"))
-//                        {
-//                            Log.d("testing","Getting coditions")
-//                            getLoKey()
-//                            conditionsNeeded=false;
-//                        }
+                        if(UserData.weather.equals("Weather Forecast"))
+                        {
+                            Log.d("testing","Getting coditions")
+                            getLoKey()
+                            conditionsNeeded=false;
+                        }
                         getNearbyHotspots()
                     }
                 }
@@ -470,7 +481,9 @@ class MapView : Fragment() {
                             conditions = conditionsList[0]
                             Log.d("testing", conditions.toString())
                             UserData.weather=conditions.WeatherText!!
-                            weather.text=conditions.WeatherText
+                            UserData.icon= if(conditions.WeatherIcon!! == null) 0 else conditions.WeatherIcon!!
+                            weather.setText(conditions.WeatherText)
+                            wIcon.setImageResource(helper.getIcon(UserData.icon))
 
                         } else {
                             Log.d("testing", "Empty or null response")

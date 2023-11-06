@@ -16,6 +16,7 @@ object UserData
     var observations= mutableListOf<Observation>()
     var spots:List<HotspotView> = listOf()
     var weather="Weather Forecast"
+    var icon:Int=0
 
 
 

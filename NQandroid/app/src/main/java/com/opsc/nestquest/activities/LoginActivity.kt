@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -45,15 +46,11 @@ class LoginActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        val usernameEditText = findViewById<EditText>(R.id.editText_username)
-        val passwordEditText = findViewById<EditText>(R.id.editText_password)
-        val viewPasswordImageView = findViewById<ImageView>(R.id.imageView_viewPassword)
+        val usernameEditText = findViewById<TextInputEditText>(R.id.editText_username)
+        val passwordEditText = findViewById<TextInputEditText>(R.id.editText_password)
         val loginButton = findViewById<Button>(R.id.button_login)
         val registerTextView = findViewById<TextView>(R.id.textView_register)
 
-        viewPasswordImageView.setOnClickListener {
-            togglePasswordVisibility(passwordEditText)
-        }
 
         loginButton.setOnClickListener {
             val email = usernameEditText.text.toString()

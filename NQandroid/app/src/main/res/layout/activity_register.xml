@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="32dp"
     android:background="#556B2F"> <!-- Olive green background -->
 
@@ -34,34 +35,88 @@
       <!-- White text -->
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/editText_username"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/userLay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_title"
-        android:layout_marginTop="32dp"
         android:hint="Username"
-        android:inputType="text"
-        android:textColor="#FFFFFF" />
+        android:layout_marginTop="20dp"
+        app:startIconDrawable="@drawable/vector_account_circle_lg">
 
-    <EditText
-        android:id="@+id/editText_email"
+      <com.google.android.material.textfield.TextInputEditText
+          android:id="@+id/editText_username"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textSize="20dp"
+          android:cursorVisible="false"
+          android:inputType="textEmailAddress"
+          tools:ignore="SpeakableTextPresentCheck" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/emailLay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:hint="Email"
-        android:inputType="textEmailAddress"
-        android:textColor="#FFFFFF" />
+        android:layout_marginTop="20dp"
+        app:startIconDrawable="@drawable/baseline_email">
 
-    <EditText
-        android:id="@+id/editText_password"
+      <com.google.android.material.textfield.TextInputEditText
+          android:id="@+id/editText_email"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textSize="20dp"
+          android:cursorVisible="false"
+          android:inputType="textEmailAddress"
+          tools:ignore="SpeakableTextPresentCheck" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/passLay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editText_username"
-        android:layout_marginTop="16dp"
         android:hint="Password"
-        android:inputType="textPassword"
-        android:textColor="#FFFFFF" />
+        android:layout_marginTop="20dp"
+        app:startIconDrawable="@drawable/baseline_password_24">
+
+      <com.google.android.material.textfield.TextInputEditText
+          android:id="@+id/editText_password"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textSize="20dp"
+          android:cursorVisible="false"
+          android:inputType="textEmailAddress"
+          tools:ignore="SpeakableTextPresentCheck" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+<!--    <EditText-->
+<!--        android:id="@+id/editText_username"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/layout_title"-->
+<!--        android:layout_marginTop="32dp"-->
+<!--        android:hint="Username"-->
+<!--        android:inputType="text"-->
+<!--        android:textColor="#FFFFFF" />-->
+
+<!--    <EditText-->
+<!--        android:id="@+id/editText_email"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:hint="Email"-->
+<!--        android:inputType="textEmailAddress"-->
+<!--        android:textColor="#FFFFFF" />-->
+
+<!--    <EditText-->
+<!--        android:id="@+id/editText_password"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/editText_username"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:hint="Password"-->
+<!--        android:inputType="textPassword"-->
+<!--        android:textColor="#FFFFFF" />-->
 
     <TextView
         android:id="@+id/textView_login"
