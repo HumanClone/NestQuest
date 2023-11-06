@@ -376,12 +376,12 @@ class MapView : Fragment() {
                         UserData.lng=location.longitude
                         locationGot=true
                         Log.d("testing","Latitude:${lolist[0].latitude}\tLongitude:${lolist[0].longitude}")
-                        if(UserData.weather.equals("Weather Forecast"))
-                        {
-                            Log.d("testing","Getting coditions")
-                            getLoKey()
-                            conditionsNeeded=false;
-                        }
+//                        if(UserData.weather.equals("Weather Forecast"))
+//                        {
+//                            Log.d("testing","Getting coditions")
+//                            getLoKey()
+//                            conditionsNeeded=false;
+//                        }
                         getNearbyHotspots()
                     }
                 }
