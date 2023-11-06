@@ -19,6 +19,9 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -45,6 +48,7 @@ import com.google.firebase.ktx.Firebase
 import com.opsc.nestquest.Objects.UserData
 import com.opsc.nestquest.R
 import com.opsc.nestquest.api.ebird.models.HotspotView
+import com.opsc.nestquest.classes.BackgroundLocal
 import com.opsc.nestquest.classes.DirectionHelper
 import com.opsc.nestquest.databinding.ActivityMainBinding
 import com.opsc.nestquest.fragments.MapView
@@ -57,21 +61,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var locationManager: LocationManager
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
-    private val INTERVAL: Long = (60*1000)//24000
-    private val FASTEST_INTERVAL: Long = (30*1000)//12000
-    lateinit var mLastLocation: Location
-    internal lateinit var mLocationRequest: LocationRequest
-    val CHANNEL_ID = "Location"
-    val CHANNEL_NAME = "Near Hotspots"
-    val NOTIF_ID = 101
     val helper:DirectionHelper=DirectionHelper()
     var firstTime:Boolean=true
     var permis:Boolean=false
-    val oneHour = 360//3600000
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         val auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
         if(currentUser==null)
@@ -80,7 +82,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        mLocationRequest = LocationRequest()
         locationManager=this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         notifPermiss.launch(Manifest.permission.POST_NOTIFICATIONS)
         val navView: BottomNavigationView = binding.navView
@@ -108,9 +109,6 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
-        createNotifChannel()
-
-
 
     }
 
@@ -122,55 +120,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    @SuppressLint("MissingPermission")
-    private fun Notif(spot:HotspotView)
-    {
-        val intent= Intent(this,NavigationActivity::class.java)
-        val pendingIntent = TaskStackBuilder.create(this).run {
-            addNextIntentWithParentStack(intent)
-            getPendingIntent(0, PendingIntent.FLAG_MUTABLE)
-        }
 
-        val notif = NotificationCompat.Builder(this,CHANNEL_ID)
-            .setContentTitle("Near a Hotspot")
-            .setContentText("You are near a hotspot: ${spot.locName}.\n Click here to navigate to the Hotspot")
-            .setSmallIcon(R.drawable.logo_round)
-            .setAutoCancel(true)
-            .setStyle(NotificationCompat.BigTextStyle())
-            .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
-            .setContentIntent(pendingIntent)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .build()
-        val notifManger = NotificationManagerCompat.from(this)
-        val sharedPreferences = getSharedPreferences("NotificationPrefs", Context.MODE_PRIVATE)
-        val lastNotificationTime = sharedPreferences.getLong("lastNotificationTime", 0)
-        val currentTime = System.currentTimeMillis()
-
-        if (currentTime - lastNotificationTime >= oneHour) {
-            Log.d("testing","Notifing User")
-            UserData.destLat=spot.latLng!!.latitude
-            UserData.destLng=spot.latLng!!.longitude
-            notifManger.notify(NOTIF_ID,notif)
-            sharedPreferences.edit().putLong("lastNotificationTime", currentTime).apply()
-        }
-    }
-
-    private fun createNotifChannel() {
-
-        val descriptionText = "Notifications that appear when you are near a Hotspot"
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance)
-        channel.description = descriptionText
-        // Register the channel with the system
-        val notificationManager: NotificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-    }
-    companion object {
-        const  val NOTIF_ID = 101
-        const val CHANNEL_ID = "Location"
-        const val CHANNEL_NAME = "Near Hotspots"
-    }
 
 
     @SuppressLint("MissingPermission")
@@ -184,67 +134,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-
-    @SuppressLint("MissingPermission")
-    protected fun startLocationUpdates() {
-
-        Log.d("testing","Start of updates on the activity")
-        // Create the location request to start receiving updates
-
-        mLocationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        mLocationRequest!!.setInterval(INTERVAL)
-        mLocationRequest!!.setFastestInterval(FASTEST_INTERVAL)
-
-        // Create LocationSettingsRequest object using location request
-        val builder = LocationSettingsRequest.Builder()
-        builder.addLocationRequest(mLocationRequest!!)
-        val locationSettingsRequest = builder.build()
-
-        val settingsClient = LocationServices.getSettingsClient(this)
-        settingsClient.checkLocationSettings(locationSettingsRequest)
-
-
-        mFusedLocationClient!!.requestLocationUpdates(mLocationRequest, mLocationCallback,
-            Looper.myLooper())
-    }
-
-    private val mLocationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult) {
-            // do work here
-            locationResult.lastLocation
-            onLocationChanged(locationResult.lastLocation!!)
-        }
-    }
-
-    fun onLocationChanged(location: Location) {
-        // New location has now been determined
-        mLastLocation = location
-        UserData.lat=location.latitude
-        UserData.lng=location.longitude
-        Log.d("testing","Location call back ON Activity ${UserData.lat}, ${UserData.lng}")
-        if(UserData.spots.size>0) {
-           var dist= helper.distanceM(
-                UserData.spots[0].locName!!,
-                UserData.spots[0].latLng!!.latitude,
-                UserData.spots[0].latLng!!.longitude!!
-            )
-
-            if(dist<50000)//ideally 500
-            {
-                Notif(UserData.spots[0])
-            }
-        }
-
-
-
-    }
-
-    private fun stoplocationUpdates() {
-        mFusedLocationClient!!.removeLocationUpdates(mLocationCallback)
-        Log.d("testing","Background stopped")
-    }
-
     val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -252,6 +141,7 @@ class MainActivity : AppCompatActivity() {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
                 // Precise location access granted.
                 getLocation()
+
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
                 // Only approximate location access granted.
@@ -291,13 +181,13 @@ class MainActivity : AppCompatActivity() {
                         UserData.lat=location.latitude
                         UserData.lng=location.longitude
 
-                        startLocationUpdates()
                         if(firstTime)
                         {
                             firstTime=false
                             if(permis)
                             {
-                                startLocationUpdates()
+                                val serviceIntent = Intent(this, BackgroundLocal::class.java)
+                                startForegroundService(serviceIntent)
                             }
                             loadFrag(MapView())
                         }
@@ -342,9 +232,6 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        stoplocationUpdates()
-    }
+
 
 }

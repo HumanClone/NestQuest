@@ -19,6 +19,8 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ServiceCompat.STOP_FOREGROUND_DETACH
+import androidx.core.app.ServiceCompat.stopForeground
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.slider.Slider
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -32,6 +34,7 @@ import com.opsc.nestquest.activities.LoginActivity
 import com.opsc.nestquest.api.nestquest.NQAPI
 import com.opsc.nestquest.api.nestquest.models.NQRetro
 import com.opsc.nestquest.api.nestquest.models.User
+import com.opsc.nestquest.classes.BackgroundLocal
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -100,6 +103,10 @@ class Settings : Fragment() {
             if(isChecked)
             {
                 notifPermiss.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+            else{
+                val serviceIntent = Intent(requireContext(), BackgroundLocal::class.java)
+
             }
         }
 

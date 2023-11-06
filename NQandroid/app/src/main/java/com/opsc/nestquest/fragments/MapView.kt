@@ -256,7 +256,6 @@ class MapView : Fragment() {
 
     private fun getNearbyHotspots()
     {
-        Log.d("testing","Here at hostspots")
         val ebirdapi=eBirdRetro.getInstance().create((eBirdApi::class.java))
         //TODO: Change the distance parameter according to the settings
         GlobalScope.launch {
@@ -280,6 +279,7 @@ class MapView : Fragment() {
                         }
                         spots=spots.sortedBy{ it.distance }
                         UserData.spots=spots
+                        Log.d("testing","sorted: "+UserData.spots.toString())
                         try {
                             val icon = resources.getDrawable(R.drawable.hot_24)
                             val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
@@ -302,7 +302,6 @@ class MapView : Fragment() {
                             Log.d("testing","catch map trying")
                         }
 
-                        Log.d("testing","sorted: "+spots.toString())
                     }
                 }
 
@@ -364,12 +363,12 @@ class MapView : Fragment() {
                         UserData.lng=location.longitude
                         locationGot=true
                         Log.d("testing","Latitude:${lolist[0].latitude}\tLongitude:${lolist[0].longitude}")
-                        if(UserData.weather.equals("Weather Forecast"))
-                        {
-                            Log.d("testing","Getting coditions")
-                            getLoKey()
-                            conditionsNeeded=false;
-                        }
+//                        if(UserData.weather.equals("Weather Forecast"))
+//                        {
+//                            Log.d("testing","Getting coditions")
+//                            getLoKey()
+//                            conditionsNeeded=false;
+//                        }
                         getNearbyHotspots()
                     }
                 }

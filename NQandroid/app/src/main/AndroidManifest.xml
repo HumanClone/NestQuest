@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
 
     <queries>
         <intent>
@@ -26,6 +28,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NextQuest"
         tools:targetApi="31">
+
+        <service android:name=".classes.BackgroundLocal"
+            android:foregroundServiceType="location"/>
+
         <activity
             android:name=".activities.NavigationActivity"
             android:exported="false" />
