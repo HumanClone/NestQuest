@@ -24,9 +24,10 @@ Discover the world of birds with NestQuest! Harnessing the power of the eBird AP
 
 Here the user can login and register for the application 
 
-![image](https://github.com/HumanClone/NestQuest/assets/74468682/c94630c7-dc93-448f-a156-30d9e552146d)
+![Login](https://github.com/HumanClone/NestQuest/assets/74468682/19e282e5-512c-4b17-9377-0a50f4c81569)
 
-![image](https://github.com/HumanClone/NestQuest/assets/74468682/3827aac9-c452-4a49-831e-2b095c593b2c)
+![Register](https://github.com/HumanClone/NestQuest/assets/74468682/4d3c9fbe-8e9d-417f-b805-f4bf8fa398b1)
+
 
 
 ## MapView 
@@ -34,7 +35,7 @@ Here the user can login and register for the application
 when the user is authenicated they will be greeted with a Mapview and after granting permissions they 
 will see there current location and the map will be populate with nearby hotspots(default system is metric with 10km radius)
 
-![MapView](https://github.com/HumanClone/NestQuest/assets/74468682/e8f4f479-a1da-4b40-894d-b5f658a3898d)
+![MapView](https://github.com/HumanClone/NestQuest/assets/74468682/cbcc5e41-bb41-4350-ba8a-ecbfad575500)
 
 ## Hotspots
 if the user clicks on the hotspot button they will see a list of all the nearby hotspots according to there distance set 
@@ -43,19 +44,20 @@ if the user clicks on the hotspot button they will see a list of all the nearby 
 
 if the user selects an item on the list or the user can click on the hotspot icon on the map to see a proper view of said hotspot and the map will move to that hotspot
 
-![Hotspot View](https://github.com/HumanClone/NestQuest/assets/74468682/fc751159-04a1-45e4-a00b-9fd310cae5b0)
+![Hotspot View](https://github.com/HumanClone/NestQuest/assets/74468682/87925320-fc41-470b-93ad-df3892d2c317)
 
 if the user cicks on the directions button they will be shown the directions to the hotspot as well as the route with the map updating according tot the users location 
 
-![Directions](https://github.com/HumanClone/NestQuest/assets/74468682/4ec09bb9-c01a-4e2d-8cb4-215bb4d5dec3)
+![Directions](https://github.com/HumanClone/NestQuest/assets/74468682/676e1c0c-1344-4984-9431-0097d9f61d5f)
 
 the user can go back to the mapview by pressing the exit navigation button
 
 ## Settings
 
-Here the user can change thier measurement system as well as the maximum distance of hotspots 
+Here the user can change thier measurement system as well 
+as the maximum distance of hotspots 
 
-![Settings](https://github.com/HumanClone/NestQuest/assets/74468682/cd9a4303-1e6f-4998-996b-7dfa70720dad)
+![Settings](https://github.com/HumanClone/NestQuest/assets/74468682/a5ffb9dc-26a5-41b8-9a6a-f7853ca3cae1)
 
 the user can also logout by clicking the logout button 
 
@@ -68,13 +70,28 @@ here the user can view a minimal detailed view of thier observations
 
 if they click on an item they will see a detailed view in which they can even navigate to the Observation by pressing the button
 
-![ObservationView](https://github.com/HumanClone/NestQuest/assets/74468682/5a68f2d4-d9cd-467e-a4e2-178f9c2c2e9b)
 
+![ObservationView](https://github.com/HumanClone/NestQuest/assets/74468682/e454a748-e774-4ffc-9e04-70b094d90e8f)
 
 if they click create observation they will be prompted to enter a description and an optional picture
 
 ![image](https://github.com/HumanClone/NestQuest/assets/74468682/66c324c5-a41f-4b61-936b-2ad760781b5d)
 
+
+## NotificationAnd Back Ground Service Breakdown
+
+To first activate the Background Service
+>- the phone should allow the app to run unrestrited ( this is due to power saving options on some devices which auto end background services)
+>- The user must have allowed the application to send notifications
+>- the user must have allowed for the near a hotspot notification
+>- the background checks run at least once every 3 hours with a maximum of once an hour( this is done to conserve battery as well as nto overwhelm the user with notifications if they are near a spot)
+Note the user is not limited by the app if they do not wish t recieve notifications, the background service will not start and the app will have all of its other features
+
+To trigger a notification
+>- User must meet the above mentioned requirements
+>- User must be less that 1000m away from the nearest hotspot,The notification will only trigger for the nearest
+>- User must not have recieved a notification with in the last 3 hours( to void bombardment)
+>- 
 
 ## Dependencies
 
