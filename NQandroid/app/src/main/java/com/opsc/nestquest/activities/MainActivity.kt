@@ -184,7 +184,7 @@ class MainActivity : AppCompatActivity() {
                         if(firstTime)
                         {
                             firstTime=false
-                            if(permis)
+                            if(permis&&UserData.user.notifications!!)
                             {
                                 val serviceIntent = Intent(this, BackgroundLocal::class.java)
                                 startForegroundService(serviceIntent)

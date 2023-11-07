@@ -184,7 +184,7 @@ class BackgroundLocal: Service() {
             {
                 var checkVal = this.checkCallingOrSelfPermission(requiredPermission)
 
-                if(UserData.user.darkTheme!!&&checkVal== PackageManager.PERMISSION_GRANTED ) {
+                if(UserData.user.notifications!!&&checkVal== PackageManager.PERMISSION_GRANTED ) {
                     createNotifChannel()
                     Notif(UserData.spots[0])
                 }

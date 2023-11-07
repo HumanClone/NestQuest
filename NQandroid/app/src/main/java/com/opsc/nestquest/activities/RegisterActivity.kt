@@ -109,7 +109,7 @@ private lateinit var binding: ActivityRegisterBinding
                         email = email,
 
                         birdSightingIds = listOf(),
-                        darkTheme = false,
+                        notifications = false,
                         maxDistance = 10.0.toFloat(),
                         metricSystem = true
                     )

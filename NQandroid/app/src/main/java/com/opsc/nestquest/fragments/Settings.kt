@@ -93,7 +93,7 @@ class Settings : Fragment() {
         usernameEditText.setText(UserData.user.name)
         emailEditText.setText(UserData.user.email)
         distance.value=UserData.user.maxDistance!!
-        notif.isChecked=UserData.user.darkTheme!!
+        notif.isChecked=UserData.user.notifications!!
         var checkVal = requireContext().checkCallingOrSelfPermission(requiredPermission)
         if(checkVal!= PackageManager.PERMISSION_GRANTED)
         {
@@ -150,7 +150,7 @@ class Settings : Fragment() {
     private fun save()
     {
         UserData.user.maxDistance=distance.value
-        UserData.user.darkTheme=notif.isChecked
+        UserData.user.notifications=notif.isChecked
         UserData.user.metricSystem = systemField.text.toString() == "Metric"
         Log.d("testing","${UserData.user.maxDistance}\t${UserData.user.metricSystem}")
         saveUser(UserData.user.userId!!,UserData.user)

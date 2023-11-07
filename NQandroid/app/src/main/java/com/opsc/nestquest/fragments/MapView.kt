@@ -445,6 +445,7 @@ class MapView : Fragment() {
                     call: Call<ALocation?>?,
                     response: Response<ALocation?>
                 ) {
+                    Log.d("testing", response.raw().toString())
                     if(response.message()=="Unauthorized")
                     {
                         weather.setText("Api Unavailable")

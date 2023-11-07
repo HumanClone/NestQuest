@@ -115,6 +115,11 @@ class LoginActivity : AppCompatActivity() {
 
                 val call:User = timeWiseApi.getUser(id)
                 UserData.user=call
+                if(UserData.user.notifications==null)
+                {
+                    UserData.user.notifications=false
+                    saveUser(UserData.user.userId!!,UserData.user)
+                }
                 getOb()
                 Log.d("testing", call.toString())
             }
@@ -163,6 +168,36 @@ class LoginActivity : AppCompatActivity() {
                 Log.d("testing","no data")
             }
 
+        }
+    }
+
+
+    //to port old accounts to the new style
+    private fun saveUser(id:String,user: User)
+    {
+        val nqApi = NQRetro.getInstance().create(NQAPI::class.java)
+
+        // passing data from our text fields to our model class.
+        Log.d("testing","String of Object  "+ user.toString())
+        GlobalScope.launch{
+            nqApi.editUser(id,user).enqueue(
+                object : Callback<User> {
+
+                    override fun onFailure(call: Call<User>, t: Throwable) {
+
+                        Log.d("testing", "It worked")
+                    }
+
+                    override fun onResponse(call: Call<User>, response: Response<User>) {
+                        val addedUser = response.body()
+                        if (response.isSuccessful)
+                        {
+                            Log.d("testing", addedUser.toString()+"worked!!")
+                        }
+                        Log.d("testing", addedUser.toString()+" fail")
+                    }
+
+                })
         }
     }
 
