@@ -75,9 +75,9 @@ namespace TimeWise.Controllers
                 {
                     data.Email = user.Email;
                 }
-                if (user.darkTheme != null)
+                if (user.notifications != null)
                 {
-                    data.darkTheme = user.darkTheme;
+                    data.notifications = user.notifications;
                 }
                 if (user.maxDistance != null)
                 {
