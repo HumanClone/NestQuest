@@ -152,7 +152,23 @@
                     tools:ignore="SpeakableTextPresentCheck" />
 
             </com.google.android.material.textfield.TextInputLayout>
-
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/extended_fab_Nav"
+                app:backgroundTint="?attr/colorSecondary"
+                android:textColor="@color/white"
+                app:iconTint="@color/white"
+                android:layout_marginStart="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Navigate"
+                android:layout_gravity="end"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"
+                android:gravity="end"
+                android:text="Navigate"
+                app:icon="@drawable/directions_24"/>
         </LinearLayout>
+
     </ScrollView>
+
 </LinearLayout>

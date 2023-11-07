@@ -2,6 +2,7 @@ package com.opsc.nestquest.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,6 +18,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -33,6 +35,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.imageview.ShapeableImageView
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.opsc.nestquest.BuildConfig
 import com.opsc.nestquest.Objects.UserData
 import com.opsc.nestquest.R
@@ -58,6 +63,8 @@ class MapView : Fragment() {
 
     private var _binding: FragmentMapViewBinding? = null
     private lateinit var locationManager: LocationManager
+    private lateinit var weather:TextInputEditText
+    private lateinit var wIcon:ShapeableImageView
     private val permissionId = 2
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
     private var lolist: List<Address> = emptyList()
@@ -73,18 +80,14 @@ class MapView : Fragment() {
     internal lateinit var mLocationRequest: LocationRequest
     var locationGot:Boolean=false
     var request:Boolean=false
-
-
-
-    //TODO: Change Later
-    var conditionsNeeded:Boolean= false
+    var conditionsNeeded:Boolean= true
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_map_view, container, false)
-        Log.d("testing","log")
+        conditionsNeeded=true
     }
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
@@ -94,15 +97,26 @@ class MapView : Fragment() {
         locationManager=requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         hotModal.mFusedLocationClient=mFusedLocationClient
         hotModal.mLocationCallback=mLocationCallback
+        weather=view.findViewById(R.id.weatherTxt)
+        wIcon=view.findViewById(R.id.Wpicture)
+        wIcon.setImageResource(helper.getIcon(UserData.icon))
+        weather.setText(UserData.weather)
+
+
         val fab = view.findViewById<FloatingActionButton>(R.id.extended_fab_loc)
         fab.setOnClickListener {
             currentLocal()
-
         }
         val fab2=view.findViewById<FloatingActionButton>(R.id.extended_fab_hot)
         fab2.setOnClickListener {
+            if(UserData.spots.size>0 && spots.size==0)
+            {
+                spots=UserData.spots
+                hotModal.spots=UserData.spots
+            }
             if(spots.size!=0)
             {
+
                 val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
                 mapFragment.getMapAsync { googleMap->
                     hotModal.setGoogleMap(googleMap)
@@ -116,27 +130,24 @@ class MapView : Fragment() {
 
             }
             else{
-                Toast.makeText(requireContext(), "No hotspots in the maximum distance ", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Ether No hotspots in the maximum distance or Still Loading ", Toast.LENGTH_LONG).show()
             }
         }
 
         mapSetup()
+        if(checkPermissions()) {
 
-        if(checkPermissions())
-        {
+
             getLocation()
             currentLocal()
-
         }
         else
         {
-//            while(!locationGot)
-//            {
-//                getLocation()
-//            }
             getLocation()
-
         }
+
+
+
         startLocationUpdates()
 
     }
@@ -258,7 +269,6 @@ class MapView : Fragment() {
 
     private fun getNearbyHotspots()
     {
-        Log.d("testing","Here at hostspots")
         val ebirdapi=eBirdRetro.getInstance().create((eBirdApi::class.java))
         //TODO: Change the distance parameter according to the settings
         GlobalScope.launch {
@@ -270,7 +280,6 @@ class MapView : Fragment() {
                 {
                     if (response.isSuccessful())
                     {
-                        Log.d("testing",response.body()!!.toString())
                         val hotspots=response.body()!!
                         spots = hotspots.map { item ->
                             HotspotView(
@@ -282,6 +291,8 @@ class MapView : Fragment() {
                             )
                         }
                         spots=spots.sortedBy{ it.distance }
+                        UserData.spots=spots
+                        Log.d("testing","sorted: "+UserData.spots.toString())
                         try {
                             val icon = resources.getDrawable(R.drawable.hot_24)
                             val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
@@ -304,7 +315,6 @@ class MapView : Fragment() {
                             Log.d("testing","catch map trying")
                         }
 
-                        Log.d("testing","sorted: "+spots.toString())
                     }
                 }
 
@@ -316,6 +326,7 @@ class MapView : Fragment() {
             })
         }
     }
+
     val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -327,9 +338,21 @@ class MapView : Fragment() {
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
                 // Only approximate location access granted.
                 getLocation()
-            } else -> {
-            getLocation()
-        }
+            }
+            else -> {
+
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Location Permissions Required")
+                    .setMessage("Please enable location permissions to use this app.")
+                    .setPositiveButton("OK") { dialog, _ ->
+                        // You can optionally add code here to take the user to the settings screen to enable permissions.
+                        val intent = Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                        startActivity(intent)
+                        dialog.dismiss()
+
+                    }
+                    .show()
+            }
         }
     }
 
@@ -353,13 +376,13 @@ class MapView : Fragment() {
                         UserData.lng=location.longitude
                         locationGot=true
                         Log.d("testing","Latitude:${lolist[0].latitude}\tLongitude:${lolist[0].longitude}")
-//                        if(conditionsNeeded)
-//                        {
-//                            getLoKey()
-//                            conditionsNeeded=false;
-//                        }
+                        if(UserData.weather.equals("Weather Forecast"))
+                        {
+                            Log.d("testing","Getting coditions")
+                            getLoKey()
+                            conditionsNeeded=false;
+                        }
                         getNearbyHotspots()
-                        startLocationUpdates()
                     }
                 }
             }
@@ -371,13 +394,13 @@ class MapView : Fragment() {
         }
         else
         {
-            Log.d("testing","Request")
-            locationPermissionRequest.launch(arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION))
 
+        locationPermissionRequest.launch(arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION))
 
         }
+
     }
 
 
@@ -405,73 +428,93 @@ class MapView : Fragment() {
     }
 
 
-//
 
 
 
-//    private fun getLoKey()
-//    {
-//        val weatherApiKey = BuildConfig.WEATHER_API_KEY
-//        val weatherApi = WeatherRetro.getInstance().create(WeatherApi::class.java)
-//        GlobalScope.launch {
-//            val call: Call<ALocation?>? = weatherApi.getKey(weatherApiKey,"${lolist[0].latitude},${lolist[0].longitude}")
-//            //val call: Call<ALocation?>? = weatherApi.getKey()
-//            call!!.enqueue(object : Callback<ALocation?> {
-//                override fun onResponse(
-//                    call: Call<ALocation?>?,
-//                    response: Response<ALocation?>
-//                ) {
-//                    if (response.isSuccessful())
-//                    {
-//                        Log.d("testing",response.body()!!.toString())
-//                        alocal=response.body()!!
-//
-//                        getConditions()
-//
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<ALocation?>?, t: Throwable?) {
-//
-//                    Log.d("Testing","fail")
-//                }
-//            })
-//        }
-//    }
-//
-//
-//    private fun getConditions() {
-//        val weatherApiKey = BuildConfig.WEATHER_API_KEY
-//        val weatherApi = WeatherRetro.getInstance().create(WeatherApi::class.java)
-//
-//        GlobalScope.launch {
-//            val call: Call<List<Conditions>?>? = weatherApi.getConditions(alocal.Key.toString(), weatherApiKey)
-//
-//            call!!.enqueue(object : Callback<List<Conditions>?> {
-//                override fun onResponse(call: Call<List<Conditions>?>?, response: Response<List<Conditions>?>)
-//                {
-//                    if (response.isSuccessful) {
-//                        val conditionsList = response.body()
-//                        if (conditionsList != null && conditionsList.isNotEmpty()) {
-//                            val conditions =
-//                                conditionsList[0] // Assuming the response contains multiple conditions
-//                            Log.d("testing", conditions.toString())
-//
-//                        } else {
-//                            Log.d("testing", "Empty or null response")
-//                        }
-//                    } else {
-//                        Log.d("testing", "Response not successful: ${response.code()}")
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<List<Conditions>?>?, t: Throwable?) {
-//                    Log.d("Testing", "fail\t${t?.message}")
-//                }
-//            })
-//
-//        }
-//   }
+    //Weather Conditions
+    private fun getLoKey()
+    {
+
+        val weatherApiKey = BuildConfig.WEATHER_API_KEY
+        val weatherApi = WeatherRetro.getInstance().create(WeatherApi::class.java)
+        GlobalScope.launch {
+            val call: Call<ALocation?>? = weatherApi.getKey(weatherApiKey,"${lolist[0].latitude},${lolist[0].longitude}")
+            //val call: Call<ALocation?>? = weatherApi.getKey()
+            call!!.enqueue(object : Callback<ALocation?> {
+                override fun onResponse(
+                    call: Call<ALocation?>?,
+                    response: Response<ALocation?>
+                ) {
+                    Log.d("testing", response.raw().toString())
+                    if(response.message()=="Unauthorized")
+                    {
+                        weather.setText("Api Unavailable")
+                        UserData.weather="Api Unavailable"
+                        return
+                    }
+                    Log.d("testing",response.raw().toString())
+                    if (response.isSuccessful())
+                    {
+                        Log.d("testing",response.body()!!.toString())
+                        alocal=response.body()!!
+
+                        getConditions()
+
+                    }
+                }
+
+                override fun onFailure(call: Call<ALocation?>?, t: Throwable?) {
+
+                    Log.d("Testing","fail")
+                }
+            })
+        }
+    }
+
+
+    private fun getConditions() {
+        val weatherApiKey = BuildConfig.WEATHER_API_KEY
+        val weatherApi = WeatherRetro.getInstance().create(WeatherApi::class.java)
+
+        GlobalScope.launch {
+            val call: Call<List<Conditions>?>? = weatherApi.getConditions(alocal.Key.toString(), weatherApiKey)
+
+            call!!.enqueue(object : Callback<List<Conditions>?> {
+                override fun onResponse(call: Call<List<Conditions>?>, response: Response<List<Conditions>?>)
+                {
+                    if (response.isSuccessful) {
+                        val conditionsList = response.body()
+                        Log.d("testing", response.raw().toString())
+                        if(response.message()=="Unauthorized")
+                        {
+                            weather.setText("Api Unavailable")
+                            UserData.weather="Api Unavailable"
+                            return
+                        }
+
+                        if (conditionsList != null && conditionsList.isNotEmpty()) {
+                            conditions = conditionsList[0]
+                            Log.d("testing", conditions.toString())
+                            UserData.weather=conditions.WeatherText!!
+                            UserData.icon= if(conditions.WeatherIcon == null) 0 else conditions.WeatherIcon!!
+                            weather.setText(conditions.WeatherText)
+                            wIcon.setImageResource(helper.getIcon(UserData.icon))
+
+                        } else {
+                            Log.d("testing", "Empty or null response")
+                        }
+                    } else {
+                        Log.d("testing", "Response not successful: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<List<Conditions>?>, t: Throwable?) {
+                    Log.d("Testing", "fail\t${t?.message}")
+                }
+            })
+
+        }
+   }
 
 
 }

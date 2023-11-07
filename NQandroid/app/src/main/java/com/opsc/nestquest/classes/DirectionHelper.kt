@@ -6,6 +6,7 @@ import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
 import com.opsc.nestquest.Objects.UserData
+import com.opsc.nestquest.R
 import com.opsc.nestquest.api.maps.models.MapData
 
 class DirectionHelper {
@@ -97,6 +98,56 @@ class DirectionHelper {
             String.format("%.2f",distanceInMeters / 1000.0) + " km"// Convert to kilometers
         } else {
             String.format("%.2f",distanceInMeters * 0.000621371).toString() +" mi" // Convert to miles
+        }
+    }
+
+    fun getIcon(num:Int):Int
+    {
+        when(num)
+        {
+            1-> return R.drawable.s01_s
+            2->return R.drawable.s02_s
+            3->return R.drawable.s03_s
+            4->return R.drawable.s04_s
+            5->return R.drawable.s05_s
+            6->return R.drawable.s06_s
+            7->return R.drawable.s07_s
+            8->return R.drawable.s08_s
+            11->return R.drawable.s11_s
+            12->return R.drawable.s12_s
+            13->return R.drawable.s13_s
+            14->return R.drawable.s14_s
+            15->return R.drawable.s15_s
+            16->return R.drawable.s16_s
+            17->return R.drawable.s17_s
+            18->return R.drawable.s18_s
+            19->return R.drawable.s19_s
+            20->return R.drawable.s20_s
+            21->return R.drawable.s21_s
+            22->return R.drawable.s22_s
+            23->return R.drawable.s23_s
+            24->return R.drawable.s24_s
+            25->return R.drawable.s25_s
+            26->return R.drawable.s26_s
+            29->return R.drawable.s29_s
+            30->return R.drawable.s30_s
+            31->return R.drawable.s31_s
+            32->return R.drawable.s32_s
+            33->return R.drawable.s33_s
+            34->return R.drawable.s34_s
+            35->return R.drawable.s35_s
+            36->return R.drawable.s36_s
+            37->return R.drawable.s37_s
+            38->return R.drawable.s38_s
+            39->return R.drawable.s39_s
+            40->return  R.drawable.s40_s
+            41->return R.drawable.s41_s
+            42->return R.drawable.s42_s
+            43->return R.drawable.s43_s
+            44->return R.drawable.s44_s
+            else->{
+                return R.drawable.eye_24
+            }
         }
     }
 }

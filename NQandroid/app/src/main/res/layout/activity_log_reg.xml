@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="32dp"
     android:background="#556B2F">
 
@@ -22,32 +23,44 @@
             android:textSize="30sp"
             android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/editText_username"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/userLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
             android:hint="Email"
-            android:inputType="text"
-            android:textColor="@color/white" />
+            android:layout_marginTop="20dp"
+            app:startIconDrawable="@drawable/baseline_email">
 
-        <EditText
-            android:id="@+id/editText_password"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editText_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:inputType="textEmailAddress"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/passLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:hint="Password"
-            android:inputType="textPassword"
-            android:textColor="@color/white" />
+            android:layout_marginTop="20dp"
+            app:startIconDrawable="@drawable/baseline_password_24">
 
-        <ImageView
-            android:id="@+id/imageView_viewPassword"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_below="@id/editText_username"
-            android:layout_marginStart="300dp"
-            android:layout_marginTop="-32dp"
-            android:contentDescription="View Password"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editText_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:inputType="textPassword"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
 
         <Button
             android:id="@+id/button_login"

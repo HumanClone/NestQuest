@@ -60,6 +60,7 @@
                     android:id="@+id/modal_dir_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
                     android:text="Directions"
                     android:textSize="30dp" />
 
@@ -67,7 +68,7 @@
                         android:id="@+id/extended_fab_loc"
                         android:textColor="@color/white"
                         app:tint="@color/white"
-                        android:layout_marginStart="100dp"
+                        android:layout_marginStart="130dp"
                         android:layout_gravity="end"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

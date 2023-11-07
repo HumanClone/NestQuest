@@ -142,11 +142,29 @@ class Directions : Fragment() {
                         val mapdata = response.body()
                         if (mapdata != null) {
                             // Assuming the response contains multiple conditions
-
+                            Log.d("testing", response.raw().toString())
                             Log.d("testing", mapdata.toString())
-                            map=mapdata
-                            data=map
-                            directions(map)
+                            if(mapdata.status=="ZERO_RESULTS") {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Destination is too far to calculate",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                stoplocationUpdates()
+                                toActivity()
+                            }
+                            else if(mapdata.routes.isEmpty())
+                            {
+                                getMapData()
+
+                            }
+                            else
+                            {
+                                map=mapdata
+                                data=map
+                                directions(map)
+                            }
+
 
 
                         } else {
@@ -177,8 +195,13 @@ class Directions : Fragment() {
             poly = true;
             polyline = googleMap.addPolyline(lineoption)
         }
-        genRecycleView(data.routes[0].legs[0].steps,recycler)
-
+        try {
+            genRecycleView(data.routes[0].legs[0].steps, recycler)
+        }
+        catch(ex:ArrayIndexOutOfBoundsException)
+        {
+            Toast.makeText(requireContext(), "No Results", Toast.LENGTH_LONG).show()
+        }
 
     }
 

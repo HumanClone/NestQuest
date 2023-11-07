@@ -27,26 +27,58 @@
             android:layout_marginEnd="20dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/locname"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/DirLay"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Location Name"
-                android:textSize="30dp"/>
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
+                android:hint="Location Name">
 
-            <TextView
-                android:id="@+id/address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Address"
-                android:textSize="25dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/locname"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    tools:ignore="SpeakableTextPresentCheck" />
 
+            </com.google.android.material.textfield.TextInputLayout>
 <!--            <TextView-->
-<!--                android:id="@+id/num"-->
+<!--                android:id="@+id/locname"-->
 <!--                android:layout_width="wrap_content"-->
 <!--                android:layout_height="wrap_content"-->
-<!--                android:text="Numspieces"-->
+<!--                android:text="Location Name"-->
+<!--                android:textSize="30dp"/>-->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/TScatLay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Address"
+                android:layout_marginTop="20dp"
+                app:startIconDrawable="@drawable/address_24">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:focusable="false"
+                    android:cursorVisible="false"
+                    android:textStyle="bold"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+<!--            <TextView-->
+<!--                android:id="@+id/address"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Address"-->
 <!--                android:textSize="25dp"/>-->
+
 
             <Space
                 android:layout_width="match_parent"
@@ -57,12 +89,24 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/dist"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/distLa"
                     android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:text="Distance"
-                    android:textSize="25dp"/>
+                    android:layout_height="60dp"
+                    android:hint="Distance">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/dist"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:textSize="20sp"
+                        android:focusable="false"
+                        android:cursorVisible="false"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                     android:id="@+id/extended_fab_directions"

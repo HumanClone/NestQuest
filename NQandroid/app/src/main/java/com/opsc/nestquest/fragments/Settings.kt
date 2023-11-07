@@ -1,6 +1,9 @@
 package com.opsc.nestquest.fragments
 
+import android.Manifest
+import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,11 +11,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.slider.Slider
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -23,6 +27,7 @@ import com.opsc.nestquest.activities.LoginActivity
 import com.opsc.nestquest.api.nestquest.NQAPI
 import com.opsc.nestquest.api.nestquest.models.NQRetro
 import com.opsc.nestquest.api.nestquest.models.User
+import com.opsc.nestquest.classes.BackgroundLocal
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -48,6 +53,11 @@ class Settings : Fragment() {
     private lateinit var systemField:MaterialAutoCompleteTextView
     private lateinit var distance:Slider
     private lateinit var unit:TextView
+    private lateinit var notif:SwitchMaterial
+    val CHANNEL_ID = "Location"
+    val CHANNEL_NAME = "Near Hotspots"
+    val NOTIF_ID = 101
+    var requiredPermission = android.Manifest.permission.POST_NOTIFICATIONS
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -63,8 +73,17 @@ class Settings : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
+
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        if(currentUser==null)
+        {
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            startActivity(intent)
+        }
         usernameEditText=view.findViewById(R.id.usernameEditText)
         emailEditText=view.findViewById(R.id.emailEditText)
+        notif=view.findViewById(R.id.Notif_Switch)
 
 
         unit=view.findViewById(R.id.unit)
@@ -74,6 +93,24 @@ class Settings : Fragment() {
         usernameEditText.setText(UserData.user.name)
         emailEditText.setText(UserData.user.email)
         distance.value=UserData.user.maxDistance!!
+        notif.isChecked=UserData.user.notifications!!
+        var checkVal = requireContext().checkCallingOrSelfPermission(requiredPermission)
+        if(checkVal!= PackageManager.PERMISSION_GRANTED)
+        {
+            notif.isChecked=false
+        }
+
+        notif.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked)
+            {
+                notifPermiss.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+            else{
+                val serviceIntent = Intent(requireContext(), BackgroundLocal::class.java)
+                requireActivity().stopService(serviceIntent)
+
+            }
+        }
 
 
         system=view.findViewById(R.id.system)
@@ -113,7 +150,7 @@ class Settings : Fragment() {
     private fun save()
     {
         UserData.user.maxDistance=distance.value
-
+        UserData.user.notifications=notif.isChecked
         UserData.user.metricSystem = systemField.text.toString() == "Metric"
         Log.d("testing","${UserData.user.maxDistance}\t${UserData.user.metricSystem}")
         saveUser(UserData.user.userId!!,UserData.user)
@@ -157,4 +194,35 @@ class Settings : Fragment() {
                 })
         }
     }
+
+
+    val notifPermiss = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { permissions ->
+        if(permissions)
+        {
+
+            notif.isChecked=true
+            val serviceIntent = Intent(requireContext(), BackgroundLocal::class.java)
+            requireActivity().startForegroundService(serviceIntent)
+        }
+        else{
+            notif.isChecked=false
+            AlertDialog.Builder(requireContext())
+                .setTitle("Notification Permissions Required")
+                .setMessage("Please enable notification permissions before you enable this notification")
+                .setPositiveButton("OK") { dialog, _ ->
+                    // You can optionally add code here to take the user to the settings screen to enable permissions.
+                    val intent = Intent(android.provider.Settings.ACTION_ALL_APPS_NOTIFICATION_SETTINGS)
+                    startActivity(intent)
+                    dialog.dismiss()
+
+                }
+                .show()
+
+
+        }
+
+    }
+
 }

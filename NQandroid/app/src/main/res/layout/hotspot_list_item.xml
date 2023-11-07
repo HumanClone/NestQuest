@@ -11,7 +11,7 @@
     android:elevation="8dp"
     android:foreground="?selectableItemBackground"
     app:cardCornerRadius="15dp"
-    android:backgroundTint="?attr/colorSecondary"
+    android:backgroundTint="#556B2F"
     android:clickable="true">
 
     <LinearLayout

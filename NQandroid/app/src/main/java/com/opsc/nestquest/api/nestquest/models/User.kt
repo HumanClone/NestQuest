@@ -8,7 +8,7 @@ data class User(
    @SerializedName("name"            ) var name            : String?  = null,
    @SerializedName("email"           ) var email           : String?  = null,
    @SerializedName("birdSightingIds" ) var birdSightingIds : List<String>?  = null,
-   @SerializedName("darkTheme"       ) var darkTheme       : Boolean? = null,
+   @SerializedName("notifications"       ) var notifications       : Boolean? = null,
    @SerializedName("maxDistance"     ) var maxDistance     : Float?     = null,
    @SerializedName("metricSystem"    ) var metricSystem    : Boolean? = null
 
