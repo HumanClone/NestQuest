@@ -1,0 +1,33 @@
+First Release V1
+-First release
+
+Key Fix V2
+-Release after key Fix
+
+Version 1.1 V3
+-Added:
+Weather Forecasts to be displayed on the map view
+The ability to navigate to an observation by selecting the option on its view
+Local Based Notifications that appear when you are near a hot spot
+
+**UI Improvements
+**Bug Fixes in the form of extra validation and better error handling to reduce crashes
+
+Version 1.1B V4
+-Added:
+Weather Forecasts to be displayed on the map view
+The ability to navigate to an observation by selecting the option on its view
+Local Based Notifications that appear when you are near a hot spot
+
+**UI Improvements
+**Bug Fixes in the form of extra validation and better error handling to reduce crashes
+
+Version 1.1C V5
+-Added:
+Weather Forecasts to be displayed on the map view
+The ability to navigate to an observation by selecting the option on its view
+Local Based Notifications that appear when you are near a hot spot
+
+**UI Improvements
+**Bug Fixes in the form of extra validation and better error handling to reduce crashes
+

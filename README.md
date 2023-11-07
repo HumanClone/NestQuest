@@ -1,5 +1,11 @@
 ![Static Badge](https://img.shields.io/badge/Kotlin-Kotlin?label=Language&labelColor=purple) ![Static Badge](https://img.shields.io/badge/MIT-License?label=License&labelColor=blue) ![Static Badge](https://img.shields.io/badge/Android-Platform?label=Platform)</br> [![PlayStore](https://lh3.googleusercontent.com/q1k2l5CwMV31JdDXcpN4Ey7O43PxnjAuZBTmcHEwQxVuv_2wCE2gAAQMWxwNUC2FYEOnYgFPOpw6kmHJWuEGeIBLTj9CuxcOEeU8UXyzWJq4NJM3lg=s0)](https://play.google.com/store/apps/details?id=com.opsc.nestquest&pcampaignid=web_share)</br>
 
+
+![Screenshot_157](https://github.com/HumanClone/NestQuest/assets/74468682/9a8c18b8-1970-44c0-a031-a6dae910ebb2)
+![image](https://github.com/HumanClone/NestQuest/assets/74468682/2b99cf5f-472f-4adc-9e31-3e1b7c8babec)
+
+
+
 ## Features
 
 - Account Creation
