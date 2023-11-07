@@ -225,7 +225,6 @@ class MapView : Fragment() {
         UserData.lat=location.latitude
         UserData.lng=location.longitude
         Log.d("testing","Location call back main ${UserData.lat}, ${UserData.lng}")
-        currentLocal()
         getNearbyHotspots()
     }
 

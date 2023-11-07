@@ -41,17 +41,18 @@ class BackgroundLocal: Service() {
 
     var requiredPermission = android.Manifest.permission.POST_NOTIFICATIONS
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
-//    private val INTERVAL: Long = (60*1000)
-//    private val FASTEST_INTERVAL: Long = (30*1000)
-    private val INTERVAL: Long = (7200*1000)
-    private val FASTEST_INTERVAL: Long = (3600*1000)
+    private val INTERVAL: Long = (60*1000)
+    private val FASTEST_INTERVAL: Long = (30*1000)
+    private val oneHour = (300*1000)
+//    private val INTERVAL: Long = (7200*1000)
+//    private val FASTEST_INTERVAL: Long = (3600*1000)
+//    val oneHour = 7200000
     lateinit var mLastLocation: Location
     internal lateinit var mLocationRequest: LocationRequest
     val CHANNEL_ID = "Location"
     val CHANNEL_NAME = "Near Hotspots"
     val NOTIF_ID = 101
     val helper:DirectionHelper=DirectionHelper()
-    val oneHour = 7200000
 
     override fun onBind(intent: Intent): IBinder? {
         // This service doesn't need to provide binding, so return null
@@ -77,6 +78,7 @@ class BackgroundLocal: Service() {
             .setContentTitle("Tracking Location")
             .setContentText("Disable the Notification Category to Stop Seeing this  Specific notification")
             .setAutoCancel(true)
+            .setOngoing(true)
             .setContentIntent(pendingIntent)
             .setSmallIcon(R.drawable.logo_round)
         startForeground(10, notification.build(), FOREGROUND_SERVICE_TYPE_LOCATION)
@@ -180,7 +182,7 @@ class BackgroundLocal: Service() {
                 UserData.spots[0].latLng!!.longitude!!
             )
             //TODO: change when deploying
-            if(dist<1000)//ideally 500
+            if(dist<10000)//ideally 500
             {
                 var checkVal = this.checkCallingOrSelfPermission(requiredPermission)
 
@@ -199,6 +201,8 @@ class BackgroundLocal: Service() {
 
     private fun stoplocationUpdates() {
         mFusedLocationClient!!.removeLocationUpdates(mLocationCallback)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(10)
         Log.d("testing","Background stopped")
     }
 

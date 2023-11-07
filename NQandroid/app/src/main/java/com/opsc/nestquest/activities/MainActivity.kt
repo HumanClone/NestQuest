@@ -184,6 +184,11 @@ class MainActivity : AppCompatActivity() {
                         if(firstTime)
                         {
                             firstTime=false
+                            if(UserData.user.notifications==null)
+                            {
+                                val intent = Intent(this, LoginActivity::class.java)
+                                startActivity(intent)
+                            }
                             if(permis&&UserData.user.notifications!!)
                             {
                                 val serviceIntent = Intent(this, BackgroundLocal::class.java)

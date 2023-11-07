@@ -12,7 +12,7 @@ object UserData
     var lng:Double=0.0
     var destLat:Double=0.0
     var destLng:Double=0.0
-    var user: User=User(null,null,null,null,null,null,true)
+    var user: User=User(null,null,null,null,null,true)
     var observations= mutableListOf<Observation>()
     var spots:List<HotspotView> = listOf()
     var weather="Weather Forecast"

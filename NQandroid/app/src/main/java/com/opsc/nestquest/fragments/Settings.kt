@@ -160,8 +160,10 @@ class Settings : Fragment() {
     private fun logout()
     {
         UserData.observations.clear()
-        val user: User = User(null,null,null,null,null,null,null)
+        val user: User = User(null,null,null,null,null,null)
         UserData.user=user
+        val serviceIntent = Intent(requireContext(), BackgroundLocal::class.java)
+        requireActivity().stopService(serviceIntent)
         FirebaseAuth.getInstance().signOut()
         val intent = Intent(requireContext(), LoginActivity::class.java)
         startActivity(intent)
@@ -223,6 +225,21 @@ class Settings : Fragment() {
 
         }
 
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        if(notif.isChecked && !UserData.user.notifications!!)
+        {
+            val serviceIntent = Intent(requireContext(), BackgroundLocal::class.java)
+            requireActivity().stopService(serviceIntent)
+
+        }
+        if(!notif.isChecked && UserData.user.notifications!!)
+        {
+            val serviceIntent = Intent(requireContext(), BackgroundLocal::class.java)
+            requireActivity().startForegroundService(serviceIntent)
+        }
     }
 
 }
