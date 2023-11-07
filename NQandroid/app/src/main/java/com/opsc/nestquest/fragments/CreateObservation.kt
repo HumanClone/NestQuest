@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -48,6 +49,7 @@ class CreateObservation : BottomSheetDialogFragment() {
     lateinit var deslay: TextInputLayout
     lateinit var recycler: RecyclerView
     lateinit var address:String
+    lateinit var parent:FragmentManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,17 +118,17 @@ class CreateObservation : BottomSheetDialogFragment() {
             recyclerView.adapter = adapter
             adapter.setOnClickListener(object : observationAdapter.OnClickListener {
                 override fun onClick(position: Int, model: Observation) {
-
+                    Log.d("testing","Onclick in create")
                     val ob=ObservationView()
                     ob.ob=model
                     if (ob.isAdded)
                     {
                         ob.dismiss()
-                        ob.show(parentFragmentManager,ObservationView.TAG)
+                        ob.show(parent,ObservationView.TAG)
                     }
                     else
                     {
-                        ob.show(parentFragmentManager,ObservationView.TAG)
+                        ob.show(parent,ObservationView.TAG)
                     }
 
                 }
@@ -195,32 +197,7 @@ class CreateObservation : BottomSheetDialogFragment() {
     }
 
 
-//    private fun addPicture(pic: Picture)
-//    {
-//        val nqAPI = NQRetro.getInstance().create(NQAPI::class.java)
-//
-//        // passing data from our text fields to our model class.
-//        Log.d("testing", "String of Object  $pic")
-//        GlobalScope.launch{
-//            nqAPI.addPic(pic).enqueue(
-//                object : Callback<Picture> {
-//
-//                    override fun onFailure(call: Call<Picture>, t: Throwable) {
-//                        Log.d("testing", "Failure")
-//                    }
-//
-//                    override fun onResponse(call: Call<Picture>, response: Response<Picture>) {
-//                        val addedUser = response.body()
-//                        if (response.isSuccessful)
-//                        {
-//                            Log.d("testing", addedUser.toString()+"worked!!")
-//                        }
-//                        Log.d("testing", addedUser.toString()+" fail pic")
-//                    }
-//
-//                })
-//        }
-//    }
+
 
     private fun addObservation(ob:Observation)
     {

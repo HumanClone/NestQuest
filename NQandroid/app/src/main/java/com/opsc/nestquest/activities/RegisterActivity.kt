@@ -107,8 +107,6 @@ private lateinit var binding: ActivityRegisterBinding
                         userId =userf!!.uid.toString(),
                         name=usernameEditText.text.toString(),
                         email = email,
-
-                        birdSightingIds = listOf(),
                         notifications = false,
                         maxDistance = 10.0.toFloat(),
                         metricSystem = true

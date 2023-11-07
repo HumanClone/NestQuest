@@ -71,6 +71,7 @@ class Observations : Fragment() {
         fab2.setOnClickListener {
             getLocation()
             val co= CreateObservation()
+            co.parent=parentFragmentManager
             co.recycler=recycler
             co.address=address
             if(co.isAdded)
@@ -93,7 +94,7 @@ class Observations : Fragment() {
             recyclerView.adapter = adapter
             adapter.setOnClickListener(object : observationAdapter.OnClickListener {
                 override fun onClick(position: Int, model: Observation) {
-
+                    Log.d("testing","Onclick in Normal")
                     val ob=ObservationView()
                     ob.ob=model
                     if (ob.isAdded)
@@ -120,8 +121,8 @@ class Observations : Fragment() {
                     if (location != null) {
                         var addressList: List<Address?>? = null
                         addressList = Geocoder(requireContext(), Locale.ENGLISH).getFromLocation(location.latitude, location.longitude, 1)
-                        Log.d("testing",addressList.toString())
-                        Log.d("testing",addressList!![0].getAddressLine(0).toString())
+//                        Log.d("testing",addressList.toString())
+//                        Log.d("testing",addressList!![0].getAddressLine(0).toString())
                         address=addressList!![0].getAddressLine(0).toString()
                         UserData.lat=location.latitude
                         UserData.lng=location.longitude
