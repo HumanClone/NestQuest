@@ -2,7 +2,6 @@
 
 
 ![Screenshot_157](https://github.com/HumanClone/NestQuest/assets/74468682/9a8c18b8-1970-44c0-a031-a6dae910ebb2)
-![image](https://github.com/HumanClone/NestQuest/assets/74468682/2b99cf5f-472f-4adc-9e31-3e1b7c8babec)
 
 
 
