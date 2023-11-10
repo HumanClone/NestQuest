@@ -155,7 +155,24 @@ class MapView : Fragment() {
     private fun mapSetup()
     {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
+
         mapFragment.getMapAsync { googleMap ->
+            if(UserData.observations.size >0)
+            {
+                val icon = resources.getDrawable(R.drawable.ob_24)
+                val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
+                mapFragment.getMapAsync {googleMap->
+                    UserData.observations.map { item->
+                        val co:List<String> =item.coordinates!!.split(";")
+                        googleMap.addMarker(
+                            MarkerOptions()
+                                .position(LatLng((co[0]).toDouble(),co[1].toDouble()))
+                                .title(item.description)
+                                .icon(BitmapDescriptorFactory.fromBitmap(icon.toBitmap(icon.intrinsicWidth, icon.intrinsicHeight, null)))
+                        )
+                    }
+                }
+            }
             googleMap.setOnMarkerClickListener { marker ->
                 if(spots.size!=0)
                 {
@@ -177,7 +194,24 @@ class MapView : Fragment() {
                         }
 
                     }
+                    else
+                    {
+                       var  co:String= marker.position.latitude.toString() + ";"+marker.position.longitude
+                        val observation=UserData.observations.find { item-> item.coordinates!!.startsWith(co) }
+                        val ob=ObservationView()
+                        ob.ob=observation!!
+                        if (ob.isAdded)
+                        {
+                            ob.dismiss()
+                            ob.show(parentFragmentManager,ObservationView.TAG)
+                        }
+                        else
+                        {
+                            ob.show(parentFragmentManager,ObservationView.TAG)
+                        }
+                    }
                 }
+
                 true // Return true to indicate that the event is consumed.
             }
         }
